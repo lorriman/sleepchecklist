@@ -1,0 +1,6 @@
+run the cli firebase-tools-instant-win.exe
+then this command : firebase emulators:start
+
+for integration tests, run
+
+flutter test -d android integration_test/testname_test.dart
