@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 
 /// Copyright Andrea Bozito, with modifications.
+/// Notable additions and classes by Greg Lorriman as noted.
 
 class Format {
   static String hours(double hours) {

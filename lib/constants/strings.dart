@@ -1,3 +1,6 @@
+/// Copyright Andrea Bozito, with modifications.
+/// Notable additions and classes by Greg Lorriman as noted.
+
 class Strings {
   // Generic strings
   static const String ok = 'OK';

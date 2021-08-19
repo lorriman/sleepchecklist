@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
-//import 'package:insomnia_checklist/app/home/checklistItem_entries/checklistItem_entries_page.dart';
 import 'package:insomnia_checklist/app/home/models/check_list_item.dart';
+
+/// Copyright Andrea Bozito, with modifications.
+/// Notable additions and classes by Greg Lorriman as noted.
 
 class CupertinoTabViewRoutes {
   static const checklistItemEntriesPage = '/checklistItem-entries-page';

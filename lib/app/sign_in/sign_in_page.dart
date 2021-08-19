@@ -99,7 +99,7 @@ class SignInPageContents extends StatelessWidget {
                 child: _buildHeader(),
               ),
               const SizedBox(height: 32.0),
-              SignInButton(
+              /* SignInButton(
                 key: emailPasswordButtonKey,
                 text: Strings.signInWithEmailPassword,
                 onPressed: viewModel.isLoading
@@ -113,7 +113,7 @@ class SignInPageContents extends StatelessWidget {
                 Strings.or,
                 style: TextStyle(fontSize: 14.0, color: Colors.black87),
                 textAlign: TextAlign.center,
-              ),
+              ),*/
               const SizedBox(height: 8),
               SignInButton(
                 key: anonymousButtonKey,
