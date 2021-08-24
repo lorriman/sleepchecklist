@@ -52,7 +52,12 @@ class FirestoreService extends ADatabaseService {
   }) async {
     final reference = firestoreInstance.doc(path);
     logger.v('try set: $path: $data');
-    await reference.set(data, SetOptions(merge: merge));
+    try {
+      await reference.set(data, SetOptions(merge: merge));
+    } catch (e, st) {
+      logger.e('ERROR', e, st);
+      rethrow;
+    }
   }
 
   Future<void> deleteData({required String path}) async {
@@ -60,7 +65,12 @@ class FirestoreService extends ADatabaseService {
     logger.v(
       'try delete: $path',
     );
-    await reference.delete();
+    try {
+      await reference.delete();
+    } catch (e, st) {
+      logger.e('ERROR', e, st);
+      rethrow;
+    }
   }
 
   Stream<List<T>> collectionStream<T>({
