@@ -8,6 +8,7 @@ import 'package:alert_dialogs/alert_dialogs.dart';
 import 'package:insomnia_checklist/constants/keys.dart';
 import 'package:insomnia_checklist/constants/strings.dart';
 import 'package:flutter/material.dart';
+import 'package:insomnia_checklist/services/globals.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:flutter/foundation.dart';
 
@@ -16,6 +17,7 @@ class AccountPage extends StatelessWidget {
     try {
       await firebaseAuth.signOut();
     } catch (e) {
+      logger.e('_signOut', e);
       unawaited(showExceptionAlertDialog(
         context: context,
         title: Strings.logoutFailed,

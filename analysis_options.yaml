@@ -19,6 +19,7 @@
 # Android Studio, and the `flutter analyze` command.
 include: all_lint_rules.yaml
 
+
 analyzer:
   strong-mode:
     implicit-casts: false

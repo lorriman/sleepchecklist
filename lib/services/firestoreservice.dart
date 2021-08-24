@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:logger/logger.dart';
+
+import 'globals.dart';
 
 /// Copyright Andrea Bozito, with modifications.
 /// Additions classes by Greg Lorriman, as noted.
@@ -48,13 +51,15 @@ class FirestoreService extends ADatabaseService {
     bool merge = false,
   }) async {
     final reference = firestoreInstance.doc(path);
-    print('$path: $data');
+    logger.v('try set: $path: $data');
     await reference.set(data, SetOptions(merge: merge));
   }
 
   Future<void> deleteData({required String path}) async {
     final reference = firestoreInstance.doc(path);
-    print('delete: $path');
+    logger.v(
+      'try delete: $path',
+    );
     await reference.delete();
   }
 
@@ -65,6 +70,7 @@ class FirestoreService extends ADatabaseService {
         queryBuilder,
     int Function(T lhs, T rhs)? sort,
   }) {
+    logger.v('try collectionStream $path');
     Query<Map<String, dynamic>> query = firestoreInstance.collection(path);
     if (queryBuilder != null) {
       query = queryBuilder(query)!;
@@ -87,6 +93,7 @@ class FirestoreService extends ADatabaseService {
     required String path,
     required T Function(Map<String, dynamic>? data, String documentID) builder,
   }) {
+    logger.v('try documentStream $path');
     final DocumentReference<Map<String, dynamic>> reference =
         firestoreInstance.doc(path);
     final Stream<DocumentSnapshot<Map<String, dynamic>>> snapshots =

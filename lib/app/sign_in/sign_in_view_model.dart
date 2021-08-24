@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:insomnia_checklist/services/globals.dart';
 
 /// Copyright Andrea Bozito, with modifications.
 /// Notable additions and classes by Greg Lorriman as noted.
@@ -18,6 +19,7 @@ class SignInViewModel with ChangeNotifier {
       await signInMethod();
       error = null;
     } catch (e) {
+      logger.e('SignInViewModel._signIn', e);
       error = e;
       rethrow;
     } finally {

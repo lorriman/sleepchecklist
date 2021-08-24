@@ -56,7 +56,7 @@ class CupertinoHomeScaffold extends StatelessWidget {
         itemData.icon,
         key: Key(() {
           final s = 'test${tabItem.toString()}TabButton';
-          print(s);
+
           return s;
         }()),
         //color: color,

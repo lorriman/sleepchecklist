@@ -52,7 +52,7 @@ final ChecklistItemListTileModelStreamProvider = StreamProvider.autoDispose
         return items;
       });
     } catch (e) {
-      print(e);
+      logger.e('ChecklistItemListTileModelStreamProvider', e);
     }
     return Stream<List<ChecklistItemListTileModel>>.empty();
   },
@@ -66,9 +66,7 @@ typedef Future<void> RatingEvent(BuildContext context,
 class ChecklistItemsPagev2 extends StatefulWidget {
   final bool trashView;
 
-  ChecklistItemsPagev2({this.trashView = false}) {
-    print('ChecklistItemsPage2 constructor');
-  }
+  ChecklistItemsPagev2({this.trashView = false}) {}
 
   @override
   _ChecklistItemsPagev2State createState() => _ChecklistItemsPagev2State();
@@ -81,6 +79,7 @@ class _ChecklistItemsPagev2State extends State<ChecklistItemsPagev2> {
       final day = context.read(itemsDateProvider).state;
       await model.setRating(rating, day);
     } catch (e) {
+      logger.e('_ChecklistItemsPagev2State._onRating', e);
       unawaited(showExceptionAlertDialog(
         context: context,
         title: 'Operation failed',
@@ -94,6 +93,7 @@ class _ChecklistItemsPagev2State extends State<ChecklistItemsPagev2> {
     try {
       await checklistItemListTileModel.setTrash(trash: !widget.trashView);
     } catch (e) {
+      logger.e('_ChecklistItemsPagev2State._onTrash', e);
       unawaited(showExceptionAlertDialog(
         context: context,
         title: 'Operation failed',
@@ -135,7 +135,6 @@ class _ChecklistItemsPagev2State extends State<ChecklistItemsPagev2> {
 
   @override
   Widget build(BuildContext context) {
-    print('Hashcode: ${this.hashCode}');
     return ProviderScope(
       overrides: [
         isTrashViewProvider.overrideWithValue(widget.trashView),
@@ -274,8 +273,8 @@ class _ChecklistItemsPagev2State extends State<ChecklistItemsPagev2> {
           child: CircularProgressIndicator.adaptive(),
         ),
       );
-    }, error: (e, _) {
-      print(e);
+    }, error: (e, st) {
+      logger.e('checklistItemsAsyncValue.when', e, st);
       return Text(e.toString());
     });
     final editItems = watch(editItemsProvider).state;
@@ -301,7 +300,7 @@ class _ChecklistItemsPagev2State extends State<ChecklistItemsPagev2> {
             : () {
                 final s =
                     'dismissable_checklistItem-${checklistItemListTileModel.ordinal}';
-                print('checklist key: $s');
+
                 return s;
               }()),
         background: Container(

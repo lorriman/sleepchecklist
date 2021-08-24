@@ -27,6 +27,7 @@ final firebaseAuthProvider =
 final authStateChangesProvider = StreamProvider<User?>(
     (ref) => ref.watch(firebaseAuthProvider).authStateChanges());
 
+//todo: rename
 final databaseProvider = Provider<Repository>((ref) {
   final auth = ref.watch(authStateChangesProvider);
 
@@ -35,10 +36,3 @@ final databaseProvider = Provider<Repository>((ref) {
   }
   throw UnimplementedError();
 });
-
-final loggerProvider = Provider<Logger>((ref) => Logger(
-      printer: PrettyPrinter(
-        methodCount: 1,
-        printEmojis: false,
-      ),
-    ));

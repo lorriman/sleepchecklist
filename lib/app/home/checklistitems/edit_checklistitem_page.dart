@@ -6,6 +6,7 @@ import 'package:alert_dialogs/alert_dialogs.dart';
 import 'package:insomnia_checklist/app/top_level_providers.dart';
 import 'package:insomnia_checklist/constants/keys.dart';
 import 'package:insomnia_checklist/routing/app_router.dart';
+import 'package:insomnia_checklist/services/globals.dart';
 import 'package:insomnia_checklist/services/repository.dart';
 import 'package:pedantic/pedantic.dart';
 
@@ -82,6 +83,7 @@ class _EditChecklistItemPageState extends State<EditChecklistItemPage> {
           Navigator.of(context).pop();
         }
       } catch (e) {
+        logger.e('_EditChecklistItemPageState._submit', e);
         if (mounted) {
           unawaited(showExceptionAlertDialog(
             context: context,

@@ -36,8 +36,9 @@ class OnboardingPage extends StatelessWidget {
               child: Container(
                 //FractionallySizedBox(
                 //widthFactor: 0.5,
-                child: SvgPicture.asset('assets/sleep.svg',
-                    semanticsLabel: 'Sleep Logo'),
+                child: Image.asset(
+                  'assets/sleep.png',
+                ),
               ),
             ),
             Expanded(

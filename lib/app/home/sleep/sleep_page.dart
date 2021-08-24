@@ -6,6 +6,7 @@ import 'package:alert_dialogs/alert_dialogs.dart';
 import 'package:insomnia_checklist/app/home/models/sleep.dart';
 import 'package:insomnia_checklist/app/home/sleep/sleep_rating_list_tile.dart';
 import 'package:insomnia_checklist/app/top_level_providers.dart';
+import 'package:insomnia_checklist/services/globals.dart';
 import 'package:intl/intl.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:insomnia_checklist/services/repository.dart';
@@ -63,9 +64,7 @@ class SleepPage extends ConsumerWidget {
   //dead variable used in legacy code below
   final DateTime _date = DateTime.now();
 
-  SleepPage() {
-    print('SleepPage constructor');
-  }
+  SleepPage() {}
 
   Future<void> _onRating(BuildContext context, SleepRating sleepRating) async {
     try {
@@ -73,6 +72,7 @@ class SleepPage extends ConsumerWidget {
 
       await database.setSleepRating(sleepRating);
     } catch (e) {
+      logger.e('SleepPage._onRating', e);
       unawaited(showExceptionAlertDialog(
         context: context,
         title: 'Operation failed',
