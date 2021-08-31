@@ -6,8 +6,7 @@ import 'package:insomnia_checklist/main.dart' as appmain;
 //import 'package:insomnia_checklist/myapp.dart' as
 
 void main() {
-  testWidgets('anon signup, add item and register sleep',
-      (WidgetTester tester) async {
+  testWidgets('anon signup, add item and register sleep', (tester) async {
     await appmain.main(args: ['integration_testing']);
 
     await tester.pumpAndSettle();

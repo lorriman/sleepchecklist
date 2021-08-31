@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:logger/logger.dart';
 
 import 'globals.dart';
 
@@ -37,6 +36,7 @@ class FakeFirestoreService extends FirestoreService {
       : firestoreInstance = fakeFirestoreInstance {
     instance = this;
   }
+  @override
   final FirebaseFirestore firestoreInstance;
   static FirestoreService? instance;
 }
@@ -44,7 +44,7 @@ class FakeFirestoreService extends FirestoreService {
 class FirestoreService extends ADatabaseService {
   final firestoreInstance = FirebaseFirestore.instance;
   static FirestoreService instance = FirestoreService();
-
+  @override
   Future<void> setData({
     required String path,
     required Map<String, dynamic> data,
@@ -60,6 +60,7 @@ class FirestoreService extends ADatabaseService {
     }
   }
 
+  @override
   Future<void> deleteData({required String path}) async {
     final reference = firestoreInstance.doc(path);
     logger.v(
@@ -73,6 +74,7 @@ class FirestoreService extends ADatabaseService {
     }
   }
 
+  @override
   Stream<List<T>> collectionStream<T>({
     required String path,
     required T Function(Map<String, dynamic>? data, String documentID) builder,
@@ -99,6 +101,7 @@ class FirestoreService extends ADatabaseService {
     });
   }
 
+  @override
   Stream<T> documentStream<T>({
     required String path,
     required T Function(Map<String, dynamic>? data, String documentID) builder,

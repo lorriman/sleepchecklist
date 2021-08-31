@@ -1,7 +1,7 @@
-const Uint32maxValue = 0xFFFFFFFF;
-const UInt32minValue = 0;
-const Int32maxValue = 0x7FFFFFFF;
-const Int32minValue = -0x80000000;
+const uInt32maxValue = 0xFFFFFFFF;
+const uInt32minValue = 0;
+const int32maxValue = 0x7FFFFFFF;
+const int32minValue = -0x80000000;
 
 //web app javascript can't do these
 /*
@@ -31,9 +31,7 @@ extension DateHelpers on DateTime {
   }
 
   bool isSameDay(final DateTime other) {
-    return this.year == other.year &&
-        this.month == other.month &&
-        this.day == other.day;
+    return year == other.year && month == other.month && day == other.day;
   }
 
   bool isSameMonth(final DateTime other) {

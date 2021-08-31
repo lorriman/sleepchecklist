@@ -48,7 +48,7 @@ final checklistItemListTileModelStreamProvider = StreamProvider.autoDispose
           vm.rewriteSortOrdinals(items);
         }
         items.sort((b, a) =>
-            (b.ordinal ?? Int32minValue).compareTo(a.ordinal ?? Int32minValue));
+            (b.ordinal ?? int32minValue).compareTo(a.ordinal ?? int32minValue));
         return items;
       });
     } catch (e) {

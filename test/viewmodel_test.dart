@@ -12,7 +12,7 @@ import 'setup_auth_mocks.dart';
 
 typedef ModelStream = Stream<List<ChecklistItemListTileModel>>;
 
-void main() async {
+Future<void> main() async {
   const uidString = 'test_uid';
   int uidCount = 0;
 
