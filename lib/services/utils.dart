@@ -37,7 +37,7 @@ extension DateHelpers on DateTime {
   }
 
   bool isSameMonth(final DateTime other) {
-    return this.year == other.year && this.month == other.month;
+    return year == other.year && month == other.month;
   }
 
   DateTime dayBefore() {

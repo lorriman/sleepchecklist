@@ -72,7 +72,7 @@ class _EditChecklistItemPageState extends State<EditChecklistItemPage> {
             defaultActionText: 'OK',
           ));
         } else {
-          final id = widget.checklistItem?.id ?? documentIdFromCurrentDate();
+          final id = widget.checklistItem?.id ?? ChecklistItem.newId();
           final checklistItem = ChecklistItem(
             id: id,
             name: _name ?? '',

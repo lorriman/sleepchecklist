@@ -49,7 +49,7 @@ void main() async {
       final viewModel = ChecklistItemsViewModel(database: fsdb!);
       modelStream = viewModel.tileModelStream(now!);
       for (int i = 1; i < 3; i++) {
-        final id = ChecklistItem.idStringSanitiser(DateTime.now().toString());
+        final id = ChecklistItem.newId();
         ids.add(id);
         final item = ChecklistItem(
           id: id,

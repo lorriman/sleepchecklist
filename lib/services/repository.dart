@@ -6,8 +6,6 @@ import 'package:insomnia_checklist/services/firestore_path.dart';
 import 'package:insomnia_checklist/app/home/models/rating.dart';
 import 'firestoreservice.dart';
 
-String documentIdFromCurrentDate() => DateTime.now().toIso8601String();
-
 class Repository {
   Repository({
     required this.uid,

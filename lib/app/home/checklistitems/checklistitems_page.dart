@@ -123,7 +123,7 @@ class _ChecklistItemsPagev2State extends State<ChecklistItemsPagev2> {
       final database = context.read(databaseProvider);
       for (int i = 1; i < 15; i++) {
         database.setChecklistItem(ChecklistItem(
-          id: DateTime.now().toString(),
+          id: ChecklistItem.newId(),
           name: 'Item$i',
           description: 'description$i',
           startDate: DateTime.now(),

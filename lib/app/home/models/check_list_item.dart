@@ -46,26 +46,26 @@ extension MealTimeExt on MealTime {
 
 @immutable
 class ChecklistItem extends Equatable {
+  // we filter out non alphanum because Firebase emulator fails for ids
+// with other symbols
+
+  static String newId() =>
+      DateTime.now().toIso8601String().replaceAll(RegExp('[^A-Za-z0-9]'), ' ');
+
   ChecklistItem({
     required this.id,
     required this.name,
     required this.description,
     required this.startDate,
-    //this.tracker = const CheckListTracker(items: {}),
     this.trash = false,
     this.deleted = false,
     this.ordinal,
-  }) {
-    //we do this because FakeFirestore interprets dots as map qualifiers,
-    //making unit tests impossible
-    this.id = idStringSanitiser(id);
-  } //, required this.description, required this.checked});
+  });
 
   late String id;
   final String name;
   final String description;
   final DateTime startDate;
-  //final CheckListTracker tracker;
   final bool trash;
   final bool deleted;
   //we need to deal with any items that don't have a sort ordinal
@@ -75,7 +75,7 @@ class ChecklistItem extends Equatable {
   //which this is detected and dealt with.
   final int? ordinal;
 
-  static String idStringSanitiser(String s) => s.replaceAll('.', ' ');
+//  static String idStringSanitiser(String s) => s.replaceAll('.', ' ');
 
   @override
   List<Object?> get props => [
