@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insomnia_checklist/services/shared_preferences_service.dart';
-import 'dart:io' show Platform;
 import 'myapp.dart';
 
 Future<void> main({List<String>? args}) async {
@@ -25,7 +26,7 @@ Future<void> main({List<String>? args}) async {
       (!kReleaseMode || global_testing_active == TestingEnum.integration)) {
     //this requires installing and running the firebase emulator
 
-    String firestoreHost = Platform.isAndroid ? '10.0.2.2' : 'localhost';
+    final firestoreHost = Platform.isAndroid ? '10.0.2.2' : 'localhost';
 
     FirebaseFirestore.instance.settings = Settings(
         host: '$firestoreHost:8080',

@@ -97,8 +97,8 @@ class ListItemsBuilderV2<T> extends StatelessWidget {
       itemBuilder: (context, index) {
         if (index == 0 || index == items.length + 1) {
           return Container(
-              key: Key('special container ' +
-                  _random.nextDouble().toString())); // zero height: not visible
+              key: Key(
+                  'special container ${_random.nextDouble().toString()}')); // zero height: not visible
         }
         return itemBuilder(context, items[index - 1]);
       },

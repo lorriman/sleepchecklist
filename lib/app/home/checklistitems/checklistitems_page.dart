@@ -19,20 +19,21 @@ import '../settings.dart';
 import 'checklistitems_view_model.dart';
 
 class CheckListItemsPageProviderParameters extends Equatable {
-  const CheckListItemsPageProviderParameters(this.day, this.isTrashView);
+  const CheckListItemsPageProviderParameters(this.day,
+      {required this.trashView});
 
   final DateTime day;
-  final bool isTrashView;
+  final bool trashView;
 
   @override
   List<Object?> get props => [
         day,
-        isTrashView,
+        trashView,
       ]; // , checked, description];
 
 }
 
-final ChecklistItemListTileModelStreamProvider = StreamProvider.autoDispose
+final checklistItemListTileModelStreamProvider = StreamProvider.autoDispose
     .family<List<ChecklistItemListTileModel>,
         CheckListItemsPageProviderParameters>(
   (ref, params) {
@@ -40,8 +41,7 @@ final ChecklistItemListTileModelStreamProvider = StreamProvider.autoDispose
       final database = ref.watch(databaseProvider);
       final vm = ChecklistItemsViewModel(database: database);
       return vm.tileModelStream(params.day).map((items) {
-        items =
-            items.where((item) => item.trash == params.isTrashView).toList();
+        items = items.where((item) => item.trash == params.trashView).toList();
 
         ///see [ChecklistItem.ordinal] for why it can be null
         if (items.any((item) => !item.trash && item.ordinal == null)) {
@@ -60,13 +60,13 @@ final ChecklistItemListTileModelStreamProvider = StreamProvider.autoDispose
 
 final isTrashViewProvider = ScopedProvider<bool>((_) => false);
 
-typedef Future<void> RatingEvent(BuildContext context,
+typedef RatingEvent = Future<void> Function(BuildContext context,
     ChecklistItemListTileModel checklistItemListTileModel, double rating);
 
 class ChecklistItemsPagev2 extends StatefulWidget {
   final bool trashView;
 
-  ChecklistItemsPagev2({this.trashView = false}) {}
+  const ChecklistItemsPagev2({this.trashView = false});
 
   @override
   _ChecklistItemsPagev2State createState() => _ChecklistItemsPagev2State();
@@ -113,8 +113,9 @@ class _ChecklistItemsPagev2State extends State<ChecklistItemsPagev2> {
     //See [ChecklistItem.ordinal] for why.
     //We could do this more elegantly but it would increase
     //boiler plate significantly for one minor purpose.
-    final params = CheckListItemsPageProviderParameters(DateTime.now(), false);
-    context.read(ChecklistItemListTileModelStreamProvider(params));
+    final params =
+        CheckListItemsPageProviderParameters(DateTime.now(), trashView: false);
+    context.read(checklistItemListTileModelStreamProvider(params));
   }
 
   void debugPopulate() {
@@ -260,8 +261,9 @@ class _ChecklistItemsPagev2State extends State<ChecklistItemsPagev2> {
   Widget _buildContents(
       BuildContext context, ScopedReader watch, DateTime date) {
     final checklistItemsAsyncValue = watch(
-        ChecklistItemListTileModelStreamProvider(
-            CheckListItemsPageProviderParameters(date, widget.trashView)));
+        checklistItemListTileModelStreamProvider(
+            CheckListItemsPageProviderParameters(date,
+                trashView: widget.trashView)));
     late List<ChecklistItemListTileModel> models;
     checklistItemsAsyncValue.when(data: (m) {
       models = m;

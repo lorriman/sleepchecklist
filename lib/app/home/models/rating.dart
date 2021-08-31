@@ -40,9 +40,7 @@ class Rating extends Equatable {
       Map<String, dynamic>? data,
       {required DateTime suppliedMonth}) {
     final Map<String, Rating> map = {};
-    final localData = data;
     data?.forEach((itemId, dynamic rating) {
-      dynamic r = rating;
       map[itemId] = Rating(
         checklistItemId: itemId,
         date: suppliedMonth,

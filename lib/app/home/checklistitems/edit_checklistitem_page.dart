@@ -107,7 +107,7 @@ class _EditChecklistItemPageState extends State<EditChecklistItemPage> {
       appBar: AppBar(
         elevation: 2.0,
         title: Text(widget.checklistItem == null ? 'New Item' : 'Edit Item'),
-        actions: <Widget>[],
+        actions: const <Widget>[],
       ),
       body: _buildContents(),
     );
@@ -140,7 +140,7 @@ class _EditChecklistItemPageState extends State<EditChecklistItemPage> {
   List<Widget> _buildFormChildren() {
     return [
       TextFormField(
-        key: Key(Keys.testEditItemText_name),
+        key: Key(Keys.testEditItemTextName),
         maxLengthEnforcement: MaxLengthEnforcement.enforced,
         maxLength: 30,
         decoration: const InputDecoration(labelText: 'Item name'),
@@ -151,7 +151,7 @@ class _EditChecklistItemPageState extends State<EditChecklistItemPage> {
         onSaved: (value) => _name = value,
       ),
       TextFormField(
-        key: Key(Keys.testEditItemText_description),
+        key: Key(Keys.testEditItemTextDescription),
         maxLengthEnforcement: MaxLengthEnforcement.enforced,
         maxLength: 255,
         decoration: const InputDecoration(labelText: 'Description (optional)'),

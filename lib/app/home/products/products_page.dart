@@ -1,7 +1,8 @@
+import 'dart:async' show Future;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:exif/exif.dart';
-import 'dart:async' show Future;
 import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -23,7 +24,6 @@ class _ProductsPageState extends State<ProductsPage> {
   final Map<String, String> productUrls = {};
   bool _showUrls = false;
   Future<Map<String, String>>? _urlsFuture;
-  Future<void>? _launched;
   BoxConstraints? _constraints;
 
   Future<void> _launchInBrowser(String url) async {
@@ -75,7 +75,7 @@ class _ProductsPageState extends State<ProductsPage> {
           ),
           onPressed: () => setState(() {
             if (url != null) {
-              _launched = _launchInBrowser(url);
+              _launchInBrowser(url);
             }
           }),
           //clipBehavior: Clip.antiAlias,
@@ -135,10 +135,9 @@ class _ProductsPageState extends State<ProductsPage> {
                         crossAxisCount: 4,
                         itemCount: 4,
                         itemBuilder: (context, index) {
-                          return Container(
-                              child: Center(
+                          return Center(
                             child: itemBuilder(context, index),
-                          ));
+                          );
                         },
                         staggeredTileBuilder: (index) => StaggeredTile.fit(2),
                         mainAxisSpacing: 4.0,

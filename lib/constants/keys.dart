@@ -19,7 +19,7 @@ class Keys {
   static const String testEditToggleButton = 'testEditToggleButton';
   static const String testEditItemSaveButton = 'testEditItemSaveButton';
 
-  static const String testEditItemText_name = 'testEditItemText_name';
-  static const String testEditItemText_description =
+  static const String testEditItemTextName = 'testEditItemText_name';
+  static const String testEditItemTextDescription =
       'testEditItemText_description';
 }

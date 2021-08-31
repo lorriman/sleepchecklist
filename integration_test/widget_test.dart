@@ -27,13 +27,12 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(Key(Keys.newChecklistItemButton)));
     await tester.pumpAndSettle();
-    await tester.enterText(
-        find.byKey(Key(Keys.testEditItemText_name)), 'Item1');
+    await tester.enterText(find.byKey(Key(Keys.testEditItemTextName)), 'Item1');
 
     await tester.pump();
 
     await tester.enterText(
-      find.byKey(Key(Keys.testEditItemText_description)),
+      find.byKey(Key(Keys.testEditItemTextDescription)),
       'Description1',
     );
     await tester.tap(find.byKey(Key(Keys.testEditItemSaveButton)));

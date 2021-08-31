@@ -7,11 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-//import 'package:insomnia_checklist/app/home/models/check_list_item.dart';
-import 'package:insomnia_checklist/app/home/checklistitems/checklistitems_page.dart';
-
-import 'package:insomnia_checklist/app/home/models/check_list_tracker.dart';
-
 enum MealTime { breakfast, lunch, supper, nightcap }
 
 const Map<MealTime, IconData> mealTimeIcons = {
@@ -52,7 +47,7 @@ class ChecklistItem extends Equatable {
   static String newId() =>
       DateTime.now().toIso8601String().replaceAll(RegExp('[^A-Za-z0-9]'), ' ');
 
-  ChecklistItem({
+  const ChecklistItem({
     required this.id,
     required this.name,
     required this.description,
@@ -62,7 +57,7 @@ class ChecklistItem extends Equatable {
     this.ordinal,
   });
 
-  late String id;
+  final String id;
   final String name;
   final String description;
   final DateTime startDate;
@@ -126,7 +121,7 @@ class ChecklistItem extends Equatable {
 
     final trash = (data['trash'] as bool?) ?? false;
     final deleted = (data['deleted'] as bool?) ?? false;
-    final ordinal = (data['ordinal'] as int?) ?? null;
+    final ordinal = data['ordinal'] as int?;
 
     return ChecklistItem(
       id: documentId,
@@ -172,9 +167,9 @@ class ChecklistItem extends Equatable {
       }
     });
     nulls ??= [];
-    nulls.forEach((item) {
+    for (final item in nulls) {
       map[item] = null;
-    });
+    }
     return ChecklistItem.fromMap(map, id);
   }
 }

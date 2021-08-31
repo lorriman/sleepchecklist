@@ -50,7 +50,7 @@ class ChecklistItemListTileModel extends Equatable {
         bodyText,
         rating,
         trash,
-      ]; // , checked, descri
+      ];
 
   Future<void> setRating(double rating, DateTime day) async {
     if (_database != null && _checklistItem != null) {
@@ -122,7 +122,7 @@ class ChecklistItemExpandedTile extends ConsumerWidget {
       decoration: BoxDecoration(
         //color:  Colors.white,
         borderRadius: BorderRadius.circular(borderRadius / (trashView ? 8 : 1)),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.grey,
             blurRadius: 10,
@@ -139,10 +139,6 @@ class ChecklistItemExpandedTile extends ConsumerWidget {
             //collapsedBackgroundColor: !trashView ? null : Colors.grey,
             //tilePadding: EdgeInsets.all(0),
             childrenPadding: EdgeInsets.all(10),
-//leading :ReorderableDragStartListener(
-//         index: index,
-//         child: const Icon(Icons.drag_handle),
-//       ),
             leading: trashView | !editItems ? null : _thumb(),
             trailing: trashView
                 ? Container(child: _thumb(), width: 40)

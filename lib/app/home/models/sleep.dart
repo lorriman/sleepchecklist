@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 
@@ -7,9 +6,8 @@ class SleepRating extends Equatable {
   static String dateToYearMonth(DateTime date) =>
       date.toString().substring(0, 7);
   static String dateToYearMonthDayPlusDayOfWeek(DateTime date) =>
-      date.toString().substring(0, 10) + ' ' + DateFormat('EE').format(date);
+      '${date.toString().substring(0, 10)} ${DateFormat('EE').format(date)}';
   static String labelAsDayOfWeek(DateTime date) {
-    final now = DateTime.now();
     final difference = date.difference(DateTime.now()).abs();
     final oneDay = Duration(days: 2);
     final twoDays = Duration(days: 3);
@@ -45,7 +43,7 @@ class SleepRating extends Equatable {
       {Map<String, dynamic>? data, required DateTime month}) {
     final Map<DateTime, SleepRating> map = {};
     if (data == null) return map;
-    data.forEach((String dateString, dynamic rating) {
+    data.forEach((dateString, dynamic rating) {
       final DateTime date = DateTime.parse(dateString);
       map[date] = SleepRating(
         date: date,

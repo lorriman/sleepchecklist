@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insomnia_checklist/services/shared_preferences_service.dart';
-import 'package:logger/logger.dart';
 import 'package:insomnia_checklist/services/repository.dart';
 //import 'dart:io' show Platform;
 

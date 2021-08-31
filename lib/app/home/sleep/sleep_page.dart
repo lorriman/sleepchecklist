@@ -57,14 +57,13 @@ final sleepRatingsForMonthStreamProvider =
   },
 );
 
-typedef Future<void> OnSleepRating(
+typedef OnSleepRating = Future<void> Function(
     BuildContext context, DateTime date, double rating);
 
 class SleepPage extends ConsumerWidget {
   //dead variable used in legacy code below
-  final DateTime _date = DateTime.now();
 
-  SleepPage() {}
+  const SleepPage();
 
   Future<void> _onRating(BuildContext context, SleepRating sleepRating) async {
     try {
@@ -83,7 +82,7 @@ class SleepPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    DateTime date = watch(sleepDateProvider).state;
+    final date = watch(sleepDateProvider).state;
     return Scaffold(
       drawer: Drawer(child: Settings()),
       appBar: AppBar(
@@ -129,9 +128,9 @@ class SleepPage extends ConsumerWidget {
 
   Widget _buildContents(
       BuildContext context, ScopedReader watch, DateTime date) {
-    final SleepRatingsAsyncValue =
+    final sleepRatingsAsyncValue =
         watch(sleepRatingsForMonthStreamProvider(date));
-    if (SleepRatingsAsyncValue.data?.value?.isEmpty ?? false) {
+    if (sleepRatingsAsyncValue.data?.value?.isEmpty ?? false) {
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Text(
@@ -141,7 +140,7 @@ class SleepPage extends ConsumerWidget {
       );
     }
     return ListItemsBuilderV1<SleepRating>(
-        data: SleepRatingsAsyncValue,
+        data: sleepRatingsAsyncValue,
         itemBuilder: (context, sleepRating) => Container(
               key: Key('sleepRating-${sleepRating.date.toString}'),
               child: Container(

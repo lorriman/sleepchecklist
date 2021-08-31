@@ -33,12 +33,8 @@ class OnboardingPage extends StatelessWidget {
             ),
             Expanded(
               flex: 3,
-              child: Container(
-                //FractionallySizedBox(
-                //widthFactor: 0.5,
-                child: Image.asset(
-                  'assets/sleep.png',
-                ),
+              child: Image.asset(
+                'assets/sleep.png',
               ),
             ),
             Expanded(

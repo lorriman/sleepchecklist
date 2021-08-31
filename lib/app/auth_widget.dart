@@ -7,7 +7,7 @@ import 'package:insomnia_checklist/app/top_level_providers.dart';
 /// Copyright Andrea Bozito, with modifications.
 /// Notable additions and classes by Greg Lorriman as noted.
 class AuthWidget extends ConsumerWidget {
-  AuthWidget({
+  const AuthWidget({
     Key? key,
     required this.signedInBuilder,
     required this.nonSignedInBuilder,
