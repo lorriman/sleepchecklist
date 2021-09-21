@@ -10,6 +10,7 @@ import 'package:insomnia_checklist/app/home/checklistitems/checklistitems_page.d
 import 'package:insomnia_checklist/services/repository.dart';
 
 import '../../top_level_providers.dart';
+import 'checklistitems_providers.dart';
 import 'edit_checklistitem_page.dart';
 
 class ChecklistItemListTileModel extends Equatable {

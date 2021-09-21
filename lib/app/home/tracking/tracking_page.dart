@@ -39,6 +39,7 @@ class TrackingPage extends ConsumerWidget {
       itemBuilder: (context, model) => EntriesListTile(model: model),
     );
     */
-    return Center(child: Text('placeholder, see tracking/tracking_page.dart'));
+    return Center(
+        child: Text('empty placeholder, see tracking/tracking_page.dart'));
   }
 }
