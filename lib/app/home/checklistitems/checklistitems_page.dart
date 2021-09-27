@@ -130,28 +130,36 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
         onReorder: (oldI, newI) =>
             _onReorder(oldI, newI, checklistItemsAsyncValue),
         itemBuilder: (context, checklistItemListTileModel) {
-          return Dismissible(
+          final tile = ChecklistItemExpandedTile(
             key: _generateListItemKey(checklistItemListTileModel),
-            background: Container(
-                color: Colors.red[200],
-                alignment: Alignment.centerLeft,
-                child: Icon(Icons.delete_forever_rounded)),
-            direction: DismissDirection.startToEnd,
-            onDismissed: (_) =>
-                _onDismissWithSnackbar(models, checklistItemListTileModel),
-            child: ChecklistItemExpandedTile(
-              rating: checklistItemListTileModel.rating ?? 0.0,
-              onRating: _onRating,
-              checklistItemListTileModel: checklistItemListTileModel,
-              onEdit: editItems
-                  ? () => checklistItemListTileModel.edit(context)
-                  : null,
-            ),
+            rating: checklistItemListTileModel.rating ?? 0.0,
+            onRating: _onRating,
+            checklistItemListTileModel: checklistItemListTileModel,
+            onEdit: editItems
+                ? () => checklistItemListTileModel.edit(context)
+                : null,
           );
+          if (!editItems) {
+            return tile;
+          } else {
+            return Dismissible(
+              key: _generateListItemKey(checklistItemListTileModel,
+                  pre: 'dismissable_'),
+              background: Container(
+                  color: Colors.red[200],
+                  alignment: Alignment.centerLeft,
+                  child: Icon(Icons.delete_forever_rounded)),
+              direction: DismissDirection.startToEnd,
+              onDismissed: (_) =>
+                  _onDismissWithSnackbar(models, checklistItemListTileModel),
+              child: tile,
+            );
+          }
         });
   }
 
-  Key _generateListItemKey(ChecklistItemListTileModel model) {
+  Key _generateListItemKey(ChecklistItemListTileModel model,
+      {String pre = ''}) {
     if (global_testing_active == TestingEnum.none) {
       return Key('checklistItem-${model.id}');
     } else {
