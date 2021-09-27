@@ -63,9 +63,9 @@ class _ChecklistItemsPageTrashState extends State<ChecklistItemsPageTrash> {
 
   Key _generateListItemKey(ChecklistItemListTileModel model) {
     if (global_testing_active == TestingEnum.none) {
-      return Key('checklistItem-${model.id}');
+      return Key('trash_checklistItem-${model.id}');
     } else {
-      return Key('dismissable_checklistItem-trash${model.ordinal}');
+      return Key('trash_dismissable_checklistItem-trash${model.ordinal}');
     }
   }
 
