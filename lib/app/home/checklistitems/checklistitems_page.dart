@@ -1,5 +1,4 @@
 import 'package:alert_dialogs/alert_dialogs.dart';
-import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -22,53 +21,17 @@ import 'checklistitems_view_model.dart';
 typedef RatingEvent = Future<void> Function(BuildContext context,
     ChecklistItemListTileModel checklistItemListTileModel, double rating);
 
-class ChecklistItemsPagev2 extends StatefulWidget {
-  final bool trashView;
-
-  const ChecklistItemsPagev2({this.trashView = false});
-
+class ChecklistItemsPage extends StatefulWidget {
   @override
-  _ChecklistItemsPagev2State createState() => _ChecklistItemsPagev2State();
+  _ChecklistItemsPageState createState() => _ChecklistItemsPageState();
 }
 
-class _ChecklistItemsPagev2State extends State<ChecklistItemsPagev2> {
-  Future<void> _onRating(BuildContext context, ChecklistItemListTileModel model,
-      double rating) async {
-    try {
-      final day = context.read(itemsDateProvider).state;
-      await model.setRating(rating, day);
-    } catch (e) {
-      logger.e('_ChecklistItemsPagev2State._onRating', e);
-      unawaited(showExceptionAlertDialog(
-        context: context,
-        title: 'Operation failed',
-        exception: e,
-      ));
-    }
-  }
-
-  Future<void> _onTrash(BuildContext context,
-      ChecklistItemListTileModel checklistItemListTileModel) async {
-    try {
-      await checklistItemListTileModel.setTrash(trash: !widget.trashView);
-    } catch (e) {
-      logger.e('_ChecklistItemsPagev2State._onTrash', e);
-      unawaited(showExceptionAlertDialog(
-        context: context,
-        title: 'Operation failed',
-        exception: e,
-      ));
-    }
-  }
-
-  Future<void> _updateSleepDate(BuildContext context, DateTime date) async {
-    context.read(sleepDateProvider).state = date;
-  }
-
+class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
   @override
   void initState() {
     super.initState();
-    //kludge: fetching this data also rewrites any null 'ordinal' items.
+    //kludge: fetching this data with checklistItemListTileModelStreamProvider
+    // also rewrites any null 'ordinal' items.
     //See [ChecklistItem.ordinal] for why.
     //We could do this more elegantly but it would increase
     //boiler plate significantly for one minor purpose.
@@ -77,153 +40,74 @@ class _ChecklistItemsPagev2State extends State<ChecklistItemsPagev2> {
     context.read(checklistItemListTileModelStreamProvider(params));
   }
 
+  /// development data
   void debugPopulate() {
-    //create some data for dev purposes
-    if (FirebaseAuth.instance.currentUser != null) {
-      final database = context.read(databaseProvider);
-      for (int i = 1; i < 15; i++) {
-        database.setChecklistItem(ChecklistItem(
-          id: ChecklistItem.newId(),
-          name: 'Item$i',
-          description: 'description$i',
-          startDate: DateTime.now(),
-          ordinal: i - 1,
-        ));
+    if (!kReleaseMode) {
+      //create some data for dev purposes
+      if (FirebaseAuth.instance.currentUser != null) {
+        final database = context.read(databaseProvider);
+        for (int i = 1; i < 15; i++) {
+          database.setChecklistItem(ChecklistItem(
+            id: ChecklistItem.newId(),
+            name: 'Item$i',
+            description: 'description$i',
+            startDate: DateTime.now(),
+            ordinal: i - 1,
+          ));
+        }
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return ProviderScope(
-      overrides: [
-        isTrashViewProvider.overrideWithValue(widget.trashView),
-      ],
-      child: Consumer(
-        key: Key('root_myapp_consumer'),
-        builder: (context, watch, _) {
-          final DateTime date = watch(itemsDateProvider).state;
-          final editItems = watch(editItemsProvider).state;
-          watch(newDayProvider).data;
+    return Consumer(
+      key: Key('root_myapp_consumer'),
+      builder: (context, watch, _) {
+        final DateTime date = watch(itemsDateProvider).state;
+        final editItems = watch(editItemsProvider).state;
+        watch(newDayProvider).data;
 
-          return Scaffold(
-            drawer: Drawer(child: Settings()),
-            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-            //FloatingAction is custom due to not working well with CupertinoTabScaffold
-            floatingActionButton:
-                editItems && !widget.trashView ? FloatingAction() : null,
-            appBar: AppBar(
-              title: widget.trashView
-                  ? Text('Trash - swipe left to restore')
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 36,
-                          child: IconButton(
-                            icon: Icon(Icons.arrow_back_ios),
-                            onPressed: () {
-                              context.read(itemsDateProvider).state =
-                                  date.dayBefore();
-                              _updateSleepDate(context, date.dayBefore());
-                            },
-                          ),
-                        ),
-                        ElevatedButton(
-                          child: Text(ChecklistItemsViewModel.labelDate(date)),
-                          autofocus: true,
-                          onLongPress: () {
-                            context.read(itemsDateProvider).state =
-                                DateTime.now();
-                          },
-                          onPressed: () {
-                            showDatePicker(
-                              context: context,
-                              firstDate: DateTime(DateTime.now().year - 3, 1),
-                              lastDate: DateTime(
-                                DateTime.now().year,
-                                DateTime.now().month,
-                                DateTime.now().day,
-                              ),
-                              initialDate: date,
-                            ).then((date) {
-                              if (date != null) {
-                                context.read(itemsDateProvider).state = date;
-                                _updateSleepDate(context, date);
-                              }
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            elevation: 15.0,
-                            primary: date.isToday() ? null : Colors.redAccent,
-                          ),
-                        ),
-                        Container(
-                          width: 40,
-                          child: IconButton(
-                            icon: Icon(Icons.arrow_forward_ios),
-                            onPressed: date.isToday()
-                                ? null
-                                : () {
-                                    context.read(itemsDateProvider).state =
-                                        date.dayAfter();
-                                    _updateSleepDate(context, date.dayAfter());
-                                  },
-                          ),
-                        ),
-                      ],
-                    ), //Strings.checklistItems),
-              actions: <Widget>[
-                if (!kReleaseMode && !widget.trashView)
-                  IconButton(
-                      icon: Icon(Icons.list_alt), onPressed: debugPopulate),
-                if (!widget.trashView)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: InkWell(
-                        key: Key(Keys.testEditToggleButton),
-                        child: !editItems
-                            ? Icon(Icons.edit)
-                            : Icon(Icons.edit_off),
-                        onTap: () {
-                          context.read(editItemsProvider).state = !editItems;
-                        }),
-                  ),
+        return Scaffold(
+          drawer: Drawer(child: Settings()),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          //FloatingAction is custom due to not working well with CupertinoTabScaffold
+          floatingActionButton: editItems ? FloatingAction() : null,
+          appBar: AppBar(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                _dateBackButton(context, date),
+                _dayButton(context, date),
+                _dateForwardButton(context, date),
               ],
-            ),
-            body: LayoutBuilder(builder: (_, constraints) {
-              return SizedBox(
-                  //kludge, ReorderableListView doesn't work with the navigation bar
-                  height: constraints.maxHeight - 50,
-                  child: _buildContents(context, watch, date));
-            }),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _trashHeader() {
-    return Container(
-      padding: EdgeInsets.all(8),
-      child: Row(children: [
-        Icon(Icons.delete_forever_rounded, size: 40.0),
-        Expanded(child: Container()),
-        Text('Swipe left to restore items'),
-      ]),
+            ), //Strings.checklistItems),
+            actions: <Widget>[
+              if (!kReleaseMode)
+                IconButton(
+                    icon: Icon(Icons.list_alt), onPressed: debugPopulate),
+              _editButton(context, editItems),
+            ],
+          ),
+          body: LayoutBuilder(builder: (_, constraints) {
+            return SizedBox(
+                //kludge, ReorderableListView doesn't work with the navigation bar
+                height: constraints.maxHeight - 50,
+                child: _buildContents(context, watch, date));
+          }),
+        );
+      },
     );
   }
 
   Widget _buildContents(
       BuildContext context, ScopedReader watch, DateTime date) {
+    final editItems = watch(editItemsProvider).state;
     final checklistItemsAsyncValue = watch(
         checklistItemListTileModelStreamProvider(
-            CheckListItemsPageProviderParameters(date,
-                trashView: widget.trashView)));
+            CheckListItemsPageProviderParameters(date, trashView: false)));
     late List<ChecklistItemListTileModel> models;
+
     checklistItemsAsyncValue.when(data: (m) {
       models = m;
     }, loading: () {
@@ -238,64 +122,180 @@ class _ChecklistItemsPagev2State extends State<ChecklistItemsPagev2> {
       logger.e('checklistItemsAsyncValue.when', e, st);
       return Text(e.toString());
     });
-    final editItems = watch(editItemsProvider).state;
+
     return ListItemsBuilderV2<ChecklistItemListTileModel>(
-      data: checklistItemsAsyncValue,
-      filter: (item) => item.trash == widget.trashView,
-      onReorder: (oldIndex, newIndex) {
-        checklistItemsAsyncValue.whenData((models) {
-          setState(() {
-            // removing the item at oldIndex will shorten the list by 1.
-            if (oldIndex < newIndex) newIndex -= 1;
-            final element = models.removeAt(oldIndex);
-            models.insert(newIndex, element);
-          });
-          final database = context.read(databaseProvider);
-          final vm = ChecklistItemsViewModel(database: database);
-          vm.rewriteSortOrdinals(models);
+        data: checklistItemsAsyncValue,
+        //filter: (item) => item.trash == false,
+        reorderable: editItems,
+        onReorder: (oldI, newI) =>
+            _onReorder(oldI, newI, checklistItemsAsyncValue),
+        itemBuilder: (context, checklistItemListTileModel) {
+          return Dismissible(
+            key: _generateListItemKey(checklistItemListTileModel),
+            background: Container(
+                color: Colors.red[200],
+                alignment: Alignment.centerLeft,
+                child: Icon(Icons.delete_forever_rounded)),
+            direction: DismissDirection.startToEnd,
+            onDismissed: (_) =>
+                _onDismissWithSnackbar(models, checklistItemListTileModel),
+            child: ChecklistItemExpandedTile(
+              rating: checklistItemListTileModel.rating ?? 0.0,
+              onRating: _onRating,
+              checklistItemListTileModel: checklistItemListTileModel,
+              onEdit: editItems
+                  ? () => checklistItemListTileModel.edit(context)
+                  : null,
+            ),
+          );
         });
-      },
-      itemBuilder: (context, checklistItemListTileModel) => Dismissible(
-        key: Key(global_testing_active == TestingEnum.none
-            ? 'checklistItem-${checklistItemListTileModel.id}'
-            : () {
-                final s =
-                    'dismissable_checklistItem-${checklistItemListTileModel.ordinal}';
+  }
 
-                return s;
-              }()),
-        background: Container(
-            color: widget.trashView ? Colors.green[200] : Colors.red[200],
-            alignment: Alignment.centerLeft,
-            child: widget.trashView
-                ? Container(
-                    padding: EdgeInsets.all(8.0),
-                    alignment: Alignment.centerRight,
-                    child: Text('restore'))
-                : Icon(Icons.delete_forever_rounded)),
-        direction: widget.trashView
-            ? DismissDirection.endToStart
-            : DismissDirection.startToEnd,
-        onDismissed: (direction) {
-          setState(() {
-            models.remove(checklistItemListTileModel);
-          });
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              duration: Duration(seconds: 1),
-              content: Text(!widget.trashView
-                  ? 'Item in bin, and can be restored'
-                  : 'item restored')));
+  Key _generateListItemKey(ChecklistItemListTileModel model) {
+    if (global_testing_active == TestingEnum.none) {
+      return Key('checklistItem-${model.id}');
+    } else {
+      return Key('dismissable_checklistItem-trash${model.ordinal}');
+    }
+  }
 
-          _onTrash(context, checklistItemListTileModel);
-        },
-        child: ChecklistItemExpandedTile(
-          rating: checklistItemListTileModel.rating ?? 0.0,
-          onRating: _onRating,
-          checklistItemListTileModel: checklistItemListTileModel,
-          onEdit:
-              editItems ? () => checklistItemListTileModel.edit(context) : null,
-        ),
+  void _onDismissWithSnackbar(List<ChecklistItemListTileModel> models,
+      ChecklistItemListTileModel model) {
+    {
+      setState(() {
+        models.remove(model);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: Duration(seconds: 1),
+        content: Text('Item in bin, and can be restored'),
+      ));
+
+      _onTrash(context, model);
+    }
+    ;
+  }
+
+  void _onReorder(int oldIndex, int newIndex,
+      AsyncValue<List<ChecklistItemListTileModel>> asyncValue) {
+    asyncValue.whenData((models) {
+      setState(() {
+        // removing the item at oldIndex will shorten the list by 1.
+        if (oldIndex < newIndex) newIndex -= 1;
+        final element = models.removeAt(oldIndex);
+        models.insert(newIndex, element);
+      });
+      final database = context.read(databaseProvider);
+      final vm = ChecklistItemsViewModel(database: database);
+      vm.rewriteSortOrdinals(models);
+    });
+  }
+
+  void _datePick(BuildContext context, DateTime date) {
+    showDatePicker(
+      context: context,
+      firstDate: DateTime(DateTime.now().year - 3, 1),
+      lastDate: DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
       ),
+      initialDate: date,
+    ).then((date) {
+      if (date != null) {
+        context.read(itemsDateProvider).state = date;
+        _updateSleepDate(context, date);
+      }
+    });
+  }
+
+  Future<void> _onRating(BuildContext context, ChecklistItemListTileModel model,
+      double rating) async {
+    try {
+      final day = context.read(itemsDateProvider).state;
+      await model.setRating(rating, day);
+    } catch (e) {
+      logger.e('_ChecklistItemsPageState._onRating', e);
+      unawaited(showExceptionAlertDialog(
+        context: context,
+        title: 'Operation failed',
+        exception: e,
+      ));
+    }
+  }
+
+  Future<void> _onTrash(BuildContext context,
+      ChecklistItemListTileModel checklistItemListTileModel) async {
+    try {
+      await checklistItemListTileModel.setTrash(trash: true);
+    } catch (e) {
+      logger.e('_ChecklistItemsPageState._onTrash', e);
+      unawaited(showExceptionAlertDialog(
+        context: context,
+        title: 'Operation failed',
+        exception: e,
+      ));
+    }
+  }
+
+  Future<void> _updateSleepDate(BuildContext context, DateTime date) async {
+    context.read(sleepDateProvider).state = date;
+  }
+
+  Widget _dateBackButton(BuildContext context, DateTime date) {
+    return Container(
+      width: 36,
+      child: IconButton(
+        icon: Icon(Icons.arrow_back_ios),
+        onPressed: () {
+          context.read(itemsDateProvider).state = date.dayBefore();
+          _updateSleepDate(context, date.dayBefore());
+        },
+      ),
+    );
+  }
+
+  Widget _dayButton(BuildContext context, DateTime date) {
+    return ElevatedButton(
+      child: Text(ChecklistItemsViewModel.labelDate(date)),
+      autofocus: true,
+      onLongPress: () {
+        context.read(itemsDateProvider).state = DateTime.now();
+      },
+      onPressed: () => _datePick(context, date),
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        elevation: 15.0,
+        primary: date.isToday() ? null : Colors.redAccent,
+      ),
+    );
+  }
+
+  Widget _dateForwardButton(BuildContext context, DateTime date) {
+    return Container(
+      width: 40,
+      child: IconButton(
+        icon: Icon(Icons.arrow_forward_ios),
+        onPressed: date.isToday()
+            ? null
+            : () {
+                context.read(itemsDateProvider).state = date.dayAfter();
+                _updateSleepDate(context, date.dayAfter());
+              },
+      ),
+    );
+  }
+
+  Widget _editButton(BuildContext context, bool isEditing) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: InkWell(
+          key: Key(Keys.testEditToggleButton),
+          child: !isEditing ? Icon(Icons.edit) : Icon(Icons.edit_off),
+          onTap: () {
+            context.read(editItemsProvider).state = !isEditing;
+          }),
     );
   }
 }

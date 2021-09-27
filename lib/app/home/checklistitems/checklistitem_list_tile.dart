@@ -10,7 +10,6 @@ import 'package:insomnia_checklist/app/home/checklistitems/checklistitems_page.d
 import 'package:insomnia_checklist/services/repository.dart';
 
 import '../../top_level_providers.dart';
-import 'checklistitems_providers.dart';
 import 'edit_checklistitem_page.dart';
 
 class ChecklistItemListTileModel extends Equatable {
@@ -19,7 +18,7 @@ class ChecklistItemListTileModel extends Equatable {
     ChecklistItem? checklistItem, //if being used readonly, we don't need this
     Repository? database, //equally here.
     required this.id,
-    required this.leadingText,
+    required this.titleText,
     this.trailingText,
     required this.bodyText,
     this.middleText,
@@ -30,7 +29,7 @@ class ChecklistItemListTileModel extends Equatable {
   })  : _checklistItem = checklistItem,
         _database = database;
 
-  final String leadingText;
+  final String titleText;
   final String id;
   final String? trailingText;
   final String? middleText;
@@ -45,7 +44,7 @@ class ChecklistItemListTileModel extends Equatable {
   @override
   List<Object?> get props => [
         id,
-        leadingText,
+        titleText,
         trailingText,
         middleText,
         bodyText,
@@ -66,7 +65,11 @@ class ChecklistItemListTileModel extends Equatable {
     if (_database != null && _checklistItem != null) {
       final newItem =
           _checklistItem!.copy({'trash': trash}, nulls: ['ordinal']);
-      await _database!.setChecklistItem(newItem);
+      if (trash) {
+        await _database!.setChecklistItemTrash(newItem);
+      } else {
+        await _database!.setChecklistItemUnTrash(newItem);
+      }
     } else {
       throw Exception(
           "can't setTrash: required database or checklistItem not set");
@@ -96,9 +99,10 @@ class ChecklistItemExpandedTile extends ConsumerWidget {
 
   Widget _thumb() {
     return Padding(
-        padding: EdgeInsets.only(left: 10, right: 0), child: Thumb());
+        padding: EdgeInsets.only(left: 10, right: 0), child: FingerSwipeIcon());
   }
 
+  //legacy code for a different way of doing ratings.
   Widget _mealIconButton(MealTime mealTime,
       {required VoidCallback? onPressed}) {
     return Container(
@@ -113,7 +117,7 @@ class ChecklistItemExpandedTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final trashView = watch(isTrashViewProvider);
+    const trashView = false;
     final darkMode = watch(darkModeProvider).state;
     final editItems = watch(editItemsProvider).state;
     const borderRadius = 40.0;
@@ -206,7 +210,7 @@ class ChecklistItemExpandedTile extends ConsumerWidget {
                     },
                   ),
                 Container(width: 5),
-                Expanded(child: Text(checklistItemListTileModel.leadingText)),
+                Expanded(child: Text(checklistItemListTileModel.titleText)),
                 if (onEdit != null && !trashView)
                   Padding(
                     padding: EdgeInsets.only(left: 8.0),
@@ -233,7 +237,7 @@ class ChecklistItemExpandedTile extends ConsumerWidget {
   }
 }
 
-class Thumb extends StatelessWidget {
+class FingerSwipeIcon extends StatelessWidget {
   @override
   Widget build(context) {
     return Row(

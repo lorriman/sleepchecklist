@@ -42,6 +42,17 @@ class ChecklistItemsViewModel {
     );
   }
 
+  Stream<List<RatingChecklistItem>> _checklistitemsTrashItemsStream() {
+    //reusing some of the infrastructure of the main Checklist tab, so we need
+    //an empty stream since we're not reading any ratings for the trash tab.
+
+    return CombineLatestStream.combine2(
+      Stream<Map<String, Rating>>.value({}),
+      database.checklistItemsTrashStream(), // as Stream<List<ChecklistItem>>,
+      _ratingsChecklistItemsCombiner,
+    );
+  }
+
   static List<RatingChecklistItem> _ratingsChecklistItemsCombiner(
       Map<String, Rating>? ratings, List<ChecklistItem> checklistItems) {
     final List<RatingChecklistItem> combo = [];
@@ -56,6 +67,10 @@ class ChecklistItemsViewModel {
   Stream<List<ChecklistItemListTileModel>> tileModelStream(DateTime day) =>
       _checklistitemsRatingitemsStream(day).map(_createModels);
 
+  /// Output stream
+  Stream<List<ChecklistItemListTileModel>> trashTileModelStream() =>
+      _checklistitemsTrashItemsStream().map(_createModels);
+
   List<ChecklistItemListTileModel> _createModels(
       List<RatingChecklistItem> allEntries) {
     if (allEntries.isEmpty) {
@@ -68,7 +83,7 @@ class ChecklistItemsViewModel {
           database: database,
           id: item.checklistItem.id,
           checklistItem: item.checklistItem,
-          leadingText: item.checklistItem.name,
+          titleText: item.checklistItem.name,
           bodyText: item.checklistItem.description,
           rating: item.rating?.value ?? 0.0,
           isHeader: false,

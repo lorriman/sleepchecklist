@@ -68,7 +68,7 @@ Future<void> main() async {
             checklistItem: item,
             database: fsdb,
             id: id,
-            leadingText: item.name,
+            titleText: item.name,
             bodyText: item.description,
             //we only want one rating
             rating: i == 1 ? i.toDouble() : 0.0,

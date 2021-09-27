@@ -3,7 +3,12 @@ import 'package:insomnia_checklist/app/home/models/sleep.dart';
 
 class FirestorePath {
   static String checklistItem(String uid) => 'users/$uid/checklistItems/items';
+  static String checklistItemTrash(String uid) =>
+      'users/$uid/checklistItems/items_trash';
+
   static String checklistItems(String uid) => 'users/$uid/checklistItems/items';
+  static String checklistItemsTrash(String uid) =>
+      'users/$uid/checklistItems/items_trash';
 
   static String entry(String uid, String entryId) =>
       'users/$uid/entries/$entryId';

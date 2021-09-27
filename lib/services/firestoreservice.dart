@@ -13,7 +13,8 @@ abstract class ADatabaseService {
     bool merge = false,
   });
 
-  Future<void> deleteData({required String path});
+  Future<void> deleteDocument({required String path});
+  Future<void> deleteField({required String path, required String fieldName});
 
   Stream<List<T>> collectionStream<T>({
     required String path,
@@ -44,6 +45,7 @@ class FakeFirestoreService extends FirestoreService {
 class FirestoreService extends ADatabaseService {
   final firestoreInstance = FirebaseFirestore.instance;
   static FirestoreService instance = FirestoreService();
+
   @override
   Future<void> setData({
     required String path,
@@ -61,13 +63,30 @@ class FirestoreService extends ADatabaseService {
   }
 
   @override
-  Future<void> deleteData({required String path}) async {
+  Future<void> deleteDocument({required String path}) async {
     final reference = firestoreInstance.doc(path);
     logger.v(
       'try delete: $path',
     );
     try {
       await reference.delete();
+    } catch (e, st) {
+      logger.e('ERROR', e, st);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteField(
+      {required String path, required String fieldName}) async {
+    final reference = firestoreInstance.doc(path);
+    logger.v(
+      'try deleteField: $path : $fieldName',
+    );
+    try {
+      await reference.update(
+        {fieldName: FieldValue.delete()},
+      );
     } catch (e, st) {
       logger.e('ERROR', e, st);
       rethrow;

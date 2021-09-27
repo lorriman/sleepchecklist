@@ -48,3 +48,20 @@ final checklistItemListTileModelStreamProvider = StreamProvider.autoDispose
     return Stream<List<ChecklistItemListTileModel>>.empty();
   },
 );
+
+final checklistTrashItemListTileModelStreamProvider =
+    StreamProvider.autoDispose<List<ChecklistItemListTileModel>>(
+  (ref) {
+    try {
+      final database = ref.watch(databaseProvider);
+      final vm = ChecklistItemsViewModel(database: database);
+      return vm.trashTileModelStream().map((items) {
+        items.sort((b, a) => (b.titleText).compareTo(a.titleText));
+        return items;
+      });
+    } catch (e) {
+      logger.e('checklistTrashItemListTileModelStreamProvider', e);
+    }
+    return Stream<List<ChecklistItemListTileModel>>.empty();
+  },
+);

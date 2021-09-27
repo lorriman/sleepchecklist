@@ -58,13 +58,14 @@ class ListItemsBuilderV2<T> extends StatelessWidget {
     Key? key,
     required this.data,
     required this.itemBuilder,
-    required this.onReorder,
+    this.reorderable = false,
+    this.onReorder,
     this.filter,
   }) : super(key: key);
   final AsyncValue<List<T>> data;
   final ItemWidgetBuilder<T> itemBuilder;
-
-  final ReorderCallback onReorder;
+  bool reorderable;
+  ReorderCallback? onReorder;
   final bool Function(T item)? filter;
   final _random = Random(3); //used for keys
 
@@ -89,19 +90,35 @@ class ListItemsBuilderV2<T> extends StatelessWidget {
     filter ??= _defaultFilter;
     final items = unFilteredItems.where(filter).toList();
 
-    return ReorderableListView.builder(
-      physics: BouncingScrollPhysics(),
-      onReorder: onReorder,
-      primary: true,
-      itemCount: items.length + 2,
-      itemBuilder: (context, index) {
-        if (index == 0 || index == items.length + 1) {
-          return Container(
-              key: Key(
-                  'special container ${_random.nextDouble().toString()}')); // zero height: not visible
-        }
-        return itemBuilder(context, items[index - 1]);
-      },
-    );
+    if (!reorderable || onReorder == null) {
+      return ListView.builder(
+        physics: BouncingScrollPhysics(),
+        primary: true,
+        itemCount: items.length + 2,
+        itemBuilder: (context, index) {
+          if (index == 0 || index == items.length + 1) {
+            return Container(
+                key: Key(
+                    'special container ${_random.nextDouble().toString()}')); // zero height: not visible
+          }
+          return itemBuilder(context, items[index - 1]);
+        },
+      );
+    } else {
+      return ReorderableListView.builder(
+        physics: BouncingScrollPhysics(),
+        onReorder: onReorder!,
+        primary: true,
+        itemCount: items.length + 2,
+        itemBuilder: (context, index) {
+          if (index == 0 || index == items.length + 1) {
+            return Container(
+                key: Key(
+                    'special container ${_random.nextDouble().toString()}')); // zero height: not visible
+          }
+          return itemBuilder(context, items[index - 1]);
+        },
+      );
+    }
   }
 }

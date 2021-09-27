@@ -79,12 +79,40 @@ class Repository {
     );
   }
 
+  Stream<List<ChecklistItem>> checklistItemsTrashStream() {
+    return _service.documentStream(
+      path: FirestorePath.checklistItemsTrash(uid),
+      builder: (data, documentId) => ChecklistItem.itemsFromMap(data),
+    );
+  }
+
   Future<void> setChecklistItem(ChecklistItem checklistItem) {
     return _service.setData(
       path: FirestorePath.checklistItem(uid),
       data: {checklistItem.id: checklistItem.toMap()},
       merge: true,
     );
+  }
+
+  Future<void> setChecklistItemTrash(ChecklistItem checklistItem) async {
+    await _service.setData(
+      path: FirestorePath.checklistItemTrash(uid),
+      data: {checklistItem.id: checklistItem.toMap()},
+      merge: true,
+    );
+    return _service.deleteField(
+        path: FirestorePath.checklistItem(uid), fieldName: checklistItem.id);
+  }
+
+  Future<void> setChecklistItemUnTrash(ChecklistItem checklistItem) async {
+    await _service.setData(
+      path: FirestorePath.checklistItem(uid),
+      data: {checklistItem.id: checklistItem.toMap()},
+      merge: true,
+    );
+    return _service.deleteField(
+        path: FirestorePath.checklistItemTrash(uid),
+        fieldName: checklistItem.id);
   }
 
   Future<List<void>> setRating(

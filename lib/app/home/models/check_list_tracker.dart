@@ -48,7 +48,8 @@ class CheckListTracker extends Equatable {
   @override
   bool get stringify => true;
 
-  factory CheckListTracker.fromMap(Map<String, dynamic>? data, String? documentId) {
+  factory CheckListTracker.fromMap(
+      Map<String, dynamic>? data, String? documentId) {
     if (data == null) {
       throw StateError('missing data for ChecklistItemId : $documentId');
     }
@@ -58,7 +59,9 @@ class CheckListTracker extends Equatable {
       if (data[_tracker_label].length != 0) {
         //this isn't working and raises an exception
         //checkedDays = (data['checked_days'] as List<int>).cast<int>();
-        data[_tracker_label].forEach((Timestamp k, List<CheckListTrackerItem> v) {
+        //so, instead...
+        data[_tracker_label]
+            .forEach((Timestamp k, List<CheckListTrackerItem> v) {
           final date = k.toDate(); //convert to DateTime
           items[date] = v;
         });
@@ -81,7 +84,10 @@ class CheckListTracker extends Equatable {
   Map<Timestamp, List<String>> toMap() {
     final Map<Timestamp, List<String>> map = {};
     items.forEach((k, v) {
-      map[Timestamp.fromDate(k)] = ['replace me', 'replace me']; //todo this is wrong, temporary stop gap
+      map[Timestamp.fromDate(k)] = [
+        'replace me',
+        'replace me'
+      ]; //todo this is wrong, temporary stop gap
     });
     return map;
   }
