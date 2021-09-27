@@ -161,9 +161,9 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
   Key _generateListItemKey(ChecklistItemListTileModel model,
       {String pre = ''}) {
     if (global_testing_active == TestingEnum.none) {
-      return Key('checklistItem-${model.id}');
+      return Key('${pre}checklistItem-${model.id}');
     } else {
-      return Key('dismissable_checklistItem-trash${model.ordinal}');
+      return Key('${pre}checklistItem-trash${model.ordinal}');
     }
   }
 
