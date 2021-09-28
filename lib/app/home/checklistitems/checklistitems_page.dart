@@ -16,10 +16,11 @@ import 'package:pedantic/pedantic.dart';
 
 import '../settings.dart';
 import 'checklistitems_providers.dart';
+import 'checklistitems_tile_model.dart';
 import 'checklistitems_view_model.dart';
 
 typedef RatingEvent = Future<void> Function(BuildContext context,
-    ChecklistItemListTileModel checklistItemListTileModel, double rating);
+    ChecklistItemTileModel checklistItemListTileModel, double rating);
 
 class ChecklistItemsPage extends StatefulWidget {
   @override
@@ -35,12 +36,11 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
     //See [ChecklistItem.ordinal] for why.
     //We could do this more elegantly but it would increase
     //boiler plate significantly for one minor purpose.
-    final params =
-        CheckListItemsPageProviderParameters(DateTime.now(), trashView: false);
-    context.read(checklistItemListTileModelStreamProvider(params));
+    final params = CheckListItemsPageParametersProvider(DateTime.now());
+    context.read(checklistItemTileModelStreamProvider(params));
   }
 
-  /// development data
+  /// inject development data
   void debugPopulate() {
     if (!kReleaseMode) {
       //create some data for dev purposes
@@ -82,7 +82,7 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
                 _dateForwardButton(context, date),
               ],
             ), //Strings.checklistItems),
-            actions: <Widget>[
+            actions: [
               if (!kReleaseMode)
                 IconButton(
                     icon: Icon(Icons.list_alt), onPressed: debugPopulate),
@@ -93,73 +93,65 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
             return SizedBox(
                 //kludge, ReorderableListView doesn't work with the navigation bar
                 height: constraints.maxHeight - 50,
-                child: _buildContents(context, watch, date));
+                child: _contents(context, watch, date));
           }),
         );
       },
     );
   }
 
-  Widget _buildContents(
-      BuildContext context, ScopedReader watch, DateTime date) {
-    final editItems = watch(editItemsProvider).state;
-    final checklistItemsAsyncValue = watch(
-        checklistItemListTileModelStreamProvider(
-            CheckListItemsPageProviderParameters(date, trashView: false)));
-    late List<ChecklistItemListTileModel> models;
+  Widget _contents(BuildContext context, ScopedReader watch, DateTime date) {
+    //providers
+    final editingItems = watch(editItemsProvider).state;
+    final tileModelsAsyncValue = watch(checklistItemTileModelStreamProvider(
+        CheckListItemsPageParametersProvider(date)));
+    late List<ChecklistItemTileModel> models;
 
-    checklistItemsAsyncValue.when(data: (m) {
-      models = m;
-    }, loading: () {
-      return Center(
-        child: Container(
-          height: 100,
-          width: 100,
-          child: CircularProgressIndicator.adaptive(),
-        ),
-      );
-    }, error: (e, st) {
-      logger.e('checklistItemsAsyncValue.when', e, st);
-      return Text(e.toString());
-    });
+    tileModelsAsyncValue.when(
+      data: (m) => models = m,
+      loading: () => basicLoadingIndicator,
+      error: (e, st) {
+        logger.e('checklistItemsAsyncValue.when', e, st);
+        return Text(e.toString());
+      },
+    );
 
-    return ListItemsBuilderV2<ChecklistItemListTileModel>(
-        data: checklistItemsAsyncValue,
+    return ListItemsBuilderV2<ChecklistItemTileModel>(
+        data: tileModelsAsyncValue,
         //filter: (item) => item.trash == false,
-        reorderable: editItems,
-        onReorder: (oldI, newI) =>
-            _onReorder(oldI, newI, checklistItemsAsyncValue),
-        itemBuilder: (context, checklistItemListTileModel) {
+        reorderable: editingItems,
+        onReorder: (oldI, newI) => _onReorder(oldI, newI, tileModelsAsyncValue),
+        itemBuilder: (context, model) {
           final tile = ChecklistItemExpandedTile(
-            key: _generateListItemKey(checklistItemListTileModel),
-            rating: checklistItemListTileModel.rating ?? 0.0,
+            key: _generateListItemKey(model),
+            rating: model.rating ?? 0.0,
             onRating: _onRating,
-            checklistItemListTileModel: checklistItemListTileModel,
-            onEdit: editItems
-                ? () => checklistItemListTileModel.edit(context)
-                : null,
+            checklistItemTileModel: model,
+            onEdit: () => model.edit(context),
           );
-          if (!editItems) {
+          if (!editingItems) {
             return tile;
           } else {
-            return Dismissible(
-              key: _generateListItemKey(checklistItemListTileModel,
-                  pre: 'dismissable_'),
-              background: Container(
-                  color: Colors.red[200],
-                  alignment: Alignment.centerLeft,
-                  child: Icon(Icons.delete_forever_rounded)),
-              direction: DismissDirection.startToEnd,
-              onDismissed: (_) =>
-                  _onDismissWithSnackbar(models, checklistItemListTileModel),
-              child: tile,
-            );
+            return _wrapDismissable(tile, models, model);
           }
         });
   }
 
-  Key _generateListItemKey(ChecklistItemListTileModel model,
-      {String pre = ''}) {
+  Widget _wrapDismissable(Widget tile, List<ChecklistItemTileModel> models,
+      ChecklistItemTileModel model) {
+    return Dismissible(
+      key: _generateListItemKey(model, pre: 'dismissable_'),
+      background: Container(
+          color: Colors.red[200],
+          alignment: Alignment.centerLeft,
+          child: Icon(Icons.delete_forever_rounded)),
+      direction: DismissDirection.startToEnd,
+      onDismissed: (_) => _onDismissWithSnackbar(models, model),
+      child: tile,
+    );
+  }
+
+  Key _generateListItemKey(ChecklistItemTileModel model, {String pre = ''}) {
     if (global_testing_active == TestingEnum.none) {
       return Key('${pre}checklistItem-${model.id}');
     } else {
@@ -167,8 +159,8 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
     }
   }
 
-  void _onDismissWithSnackbar(List<ChecklistItemListTileModel> models,
-      ChecklistItemListTileModel model) {
+  void _onDismissWithSnackbar(
+      List<ChecklistItemTileModel> models, ChecklistItemTileModel model) {
     {
       setState(() {
         models.remove(model);
@@ -180,17 +172,17 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
 
       _onTrash(context, model);
     }
-    ;
   }
 
   void _onReorder(int oldIndex, int newIndex,
-      AsyncValue<List<ChecklistItemListTileModel>> asyncValue) {
+      AsyncValue<List<ChecklistItemTileModel>> asyncValue) {
     asyncValue.whenData((models) {
       setState(() {
         // removing the item at oldIndex will shorten the list by 1.
-        if (oldIndex < newIndex) newIndex -= 1;
+        int index = newIndex;
+        if (oldIndex < newIndex) index -= 1;
         final element = models.removeAt(oldIndex);
-        models.insert(newIndex, element);
+        models.insert(index, element);
       });
       final database = context.read(databaseProvider);
       final vm = ChecklistItemsViewModel(database: database);
@@ -216,8 +208,8 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
     });
   }
 
-  Future<void> _onRating(BuildContext context, ChecklistItemListTileModel model,
-      double rating) async {
+  Future<void> _onRating(
+      BuildContext context, ChecklistItemTileModel model, double rating) async {
     try {
       final day = context.read(itemsDateProvider).state;
       await model.setRating(rating, day);
@@ -232,7 +224,7 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
   }
 
   Future<void> _onTrash(BuildContext context,
-      ChecklistItemListTileModel checklistItemListTileModel) async {
+      ChecklistItemTileModel checklistItemListTileModel) async {
     try {
       await checklistItemListTileModel.setTrash(trash: true);
     } catch (e) {

@@ -5,37 +5,36 @@ import 'package:insomnia_checklist/services/utils.dart';
 
 import '../../top_level_providers.dart';
 import 'checklistitem_list_tile.dart';
+import 'checklistitems_tile_model.dart';
 import 'checklistitems_view_model.dart';
 
-final isTrashViewProvider = ScopedProvider<bool>((_) => false);
+//final isTrashViewProvider = ScopedProvider<bool>((_) => false);
 
-class CheckListItemsPageProviderParameters extends Equatable {
-  const CheckListItemsPageProviderParameters(this.day,
-      {required this.trashView});
+class CheckListItemsPageParametersProvider extends Equatable {
+  const CheckListItemsPageParametersProvider(this.day);
 
   final DateTime day;
-  final bool trashView;
 
   @override
   List<Object?> get props => [
         day,
-        trashView,
       ]; // , checked, description];
 
 }
 
-final checklistItemListTileModelStreamProvider = StreamProvider.autoDispose
-    .family<List<ChecklistItemListTileModel>,
-        CheckListItemsPageProviderParameters>(
+final checklistItemTileModelStreamProvider = StreamProvider.autoDispose
+    .family<List<ChecklistItemTileModel>, CheckListItemsPageParametersProvider>(
   (ref, params) {
     try {
       final database = ref.watch(databaseProvider);
       final vm = ChecklistItemsViewModel(database: database);
       return vm.tileModelStream(params.day).map((items) {
-        items = items.where((item) => item.trash == params.trashView).toList();
+        //we're not filtering (hence true) so this is a placeholder
+        //for future filtering
+        items = items.where((item) => true).toList();
 
         ///see [ChecklistItem.ordinal] for why it can be null
-        if (items.any((item) => !item.trash && item.ordinal == null)) {
+        if (items.any((item) => item.ordinal == null)) {
           vm.rewriteSortOrdinals(items);
         }
         items.sort((b, a) =>
@@ -45,12 +44,12 @@ final checklistItemListTileModelStreamProvider = StreamProvider.autoDispose
     } catch (e) {
       logger.e('ChecklistItemListTileModelStreamProvider', e);
     }
-    return Stream<List<ChecklistItemListTileModel>>.empty();
+    return Stream<List<ChecklistItemTileModel>>.empty();
   },
 );
 
 final checklistTrashItemListTileModelStreamProvider =
-    StreamProvider.autoDispose<List<ChecklistItemListTileModel>>(
+    StreamProvider.autoDispose<List<ChecklistItemTileModel>>(
   (ref) {
     try {
       final database = ref.watch(databaseProvider);
@@ -62,6 +61,6 @@ final checklistTrashItemListTileModelStreamProvider =
     } catch (e) {
       logger.e('checklistTrashItemListTileModelStreamProvider', e);
     }
-    return Stream<List<ChecklistItemListTileModel>>.empty();
+    return Stream<List<ChecklistItemTileModel>>.empty();
   },
 );

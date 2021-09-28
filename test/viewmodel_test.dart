@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:insomnia_checklist/app/home/checklistitems/checklistitems_view_model.dart';
 import 'setup_auth_mocks.dart';
 
-typedef ModelStream = Stream<List<ChecklistItemListTileModel>>;
+typedef ModelStream = Stream<List<ChecklistItemTileModel>>;
 
 Future<void> main() async {
   const uidString = 'test_uid';
@@ -27,7 +27,7 @@ Future<void> main() async {
   Repository? fsdb;
   ModelStream? modelStream;
 
-  final List<ChecklistItemListTileModel> expectedModels = [];
+  final List<ChecklistItemTileModel> expectedModels = [];
   final ids = <String>[];
   final items = <String, ChecklistItem>{};
   DateTime? now;
@@ -64,7 +64,7 @@ Future<void> main() async {
         //we only want one rating,
         if (i == 1) await db.setRating(i.toDouble(), item, now!);
 
-        final model = ChecklistItemListTileModel(
+        final model = ChecklistItemTileModel(
             checklistItem: item,
             database: fsdb,
             id: id,
@@ -91,7 +91,7 @@ Future<void> main() async {
       await expectedModels[1].setTrash(trash: true);
 
       modelStream!
-          .listen(expectAsync1<void, List<ChecklistItemListTileModel>>((list) {
+          .listen(expectAsync1<void, List<ChecklistItemTileModel>>((list) {
         expect(
           list.singleWhere((item) => item.trash).id,
           expectedModels[1].id,
@@ -101,7 +101,7 @@ Future<void> main() async {
     test('Checklist view change rating to MvvM stream', () async {
       await fsdb!.setRating(5.0, items[ids[0]]!, now!);
       modelStream!
-          .listen(expectAsync1<void, List<ChecklistItemListTileModel>>((list) {
+          .listen(expectAsync1<void, List<ChecklistItemTileModel>>((list) {
         expect(
           list.singleWhere((item) => item.rating == 5.0).id,
           expectedModels[0].id,

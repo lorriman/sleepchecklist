@@ -10,6 +10,7 @@ import 'package:pedantic/pedantic.dart';
 
 import '../settings.dart';
 import 'checklistitems_providers.dart';
+import 'checklistitems_tile_model.dart';
 
 class ChecklistItemsPageTrash extends StatefulWidget {
   const ChecklistItemsPageTrash();
@@ -37,7 +38,7 @@ class _ChecklistItemsPageTrashState extends State<ChecklistItemsPageTrash> {
   }
 
   Future<void> _onUnTrash(BuildContext context,
-      ChecklistItemListTileModel checklistItemListTileModel) async {
+      ChecklistItemTileModel checklistItemListTileModel) async {
     try {
       await checklistItemListTileModel.setTrash(trash: false);
     } catch (e) {
@@ -61,7 +62,7 @@ class _ChecklistItemsPageTrashState extends State<ChecklistItemsPageTrash> {
     );
   }
 
-  Key _generateListItemKey(ChecklistItemListTileModel model) {
+  Key _generateListItemKey(ChecklistItemTileModel model) {
     if (global_testing_active == TestingEnum.none) {
       return Key('trash_checklistItem-${model.id}');
     } else {
@@ -69,8 +70,8 @@ class _ChecklistItemsPageTrashState extends State<ChecklistItemsPageTrash> {
     }
   }
 
-  void _onDismissWithSnackbar(List<ChecklistItemListTileModel> models,
-      ChecklistItemListTileModel model) {
+  void _onDismissWithSnackbar(
+      List<ChecklistItemTileModel> models, ChecklistItemTileModel model) {
     setState(() {
       models.remove(model);
       _onUnTrash(context, model);
@@ -82,7 +83,7 @@ class _ChecklistItemsPageTrashState extends State<ChecklistItemsPageTrash> {
   Widget _buildContents(BuildContext context, ScopedReader watch) {
     final checklistItemsAsyncValue =
         watch(checklistTrashItemListTileModelStreamProvider);
-    late List<ChecklistItemListTileModel> models;
+    late List<ChecklistItemTileModel> models;
     checklistItemsAsyncValue.when(data: (m) {
       models = m;
     }, loading: () {
@@ -97,7 +98,7 @@ class _ChecklistItemsPageTrashState extends State<ChecklistItemsPageTrash> {
       logger.e('checklistItemsAsyncValue.when', e, st);
       return Text(e.toString());
     });
-    return ListItemsBuilderV2<ChecklistItemListTileModel>(
+    return ListItemsBuilderV2<ChecklistItemTileModel>(
       data: checklistItemsAsyncValue,
       filter: (item) => item.trash,
       itemBuilder: (context, checklistItemListTileModel) => Dismissible(

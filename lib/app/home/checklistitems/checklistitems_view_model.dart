@@ -6,6 +6,7 @@ import 'package:insomnia_checklist/app/home/models/check_list_item.dart';
 import 'package:insomnia_checklist/services/repository.dart';
 import 'package:insomnia_checklist/services/utils.dart';
 import 'checklistitem_list_tile.dart';
+import 'checklistitems_tile_model.dart';
 
 class ChecklistItemsViewModel {
   ChecklistItemsViewModel({required this.database});
@@ -18,8 +19,7 @@ class ChecklistItemsViewModel {
     return DateFormat.yMMMEd().format(date);
   }
 
-  Future<void> rewriteSortOrdinals(
-      List<ChecklistItemListTileModel> items) async {
+  Future<void> rewriteSortOrdinals(List<ChecklistItemTileModel> items) async {
     final Map<String, int> newSortOrdinalsMap = {};
     int i = 0;
     //put null ordinals to the top of the list (ie, which were un-trashed or new)
@@ -64,22 +64,22 @@ class ChecklistItemsViewModel {
   }
 
   /// Output stream
-  Stream<List<ChecklistItemListTileModel>> tileModelStream(DateTime day) =>
+  Stream<List<ChecklistItemTileModel>> tileModelStream(DateTime day) =>
       _checklistitemsRatingitemsStream(day).map(_createModels);
 
   /// Output stream
-  Stream<List<ChecklistItemListTileModel>> trashTileModelStream() =>
+  Stream<List<ChecklistItemTileModel>> trashTileModelStream() =>
       _checklistitemsTrashItemsStream().map(_createModels);
 
-  List<ChecklistItemListTileModel> _createModels(
+  List<ChecklistItemTileModel> _createModels(
       List<RatingChecklistItem> allEntries) {
     if (allEntries.isEmpty) {
       return [];
     }
 
-    return <ChecklistItemListTileModel>[
+    return <ChecklistItemTileModel>[
       for (RatingChecklistItem item in allEntries) ...[
-        ChecklistItemListTileModel(
+        ChecklistItemTileModel(
           database: database,
           id: item.checklistItem.id,
           checklistItem: item.checklistItem,

@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 const uInt32maxValue = 0xFFFFFFFF;
 const uInt32minValue = 0;
 const int32maxValue = 0x7FFFFFFF;
@@ -10,6 +12,16 @@ const Uint64minValue = 0;
 const Int64maxValue = 0x7FFFFFFFFFFFFFFF;
 const Int64minValue = -0x8000000000000000;
 */
+Widget basicLoadingIndicator() {
+  return Center(
+    child: Container(
+      height: 100,
+      width: 100,
+      child: CircularProgressIndicator.adaptive(),
+    ),
+  );
+}
+
 extension DateHelpers on DateTime {
   bool isToday() {
     final now = DateTime.now();
