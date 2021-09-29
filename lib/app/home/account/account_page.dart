@@ -82,7 +82,6 @@ class AccountPage extends StatelessWidget {
         if (user.displayName != null)
           Text(
             user.displayName!,
-            style: const TextStyle(color: Colors.white),
           ),
         const SizedBox(height: 8),
         if (!kReleaseMode) Text(user.uid),

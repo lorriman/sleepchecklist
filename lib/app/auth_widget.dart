@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insomnia_checklist/app/home/checklistitems/empty_content.dart';
 import 'package:insomnia_checklist/app/top_level_providers.dart';
+import 'package:insomnia_checklist/services/utils.dart';
 
 /// Copyright Andrea Bozito, with modifications.
 /// Notable additions and classes by Greg Lorriman as noted.
@@ -20,9 +21,9 @@ class AuthWidget extends ConsumerWidget {
     final authStateChanges = watch(authStateChangesProvider);
     return authStateChanges.when(
       data: (user) => _data(context, user),
-      loading: () => const Scaffold(
+      loading: () => Scaffold(
         body: Center(
-          child: CircularProgressIndicator(),
+          child: basicLoadingIndicator(),
         ),
       ),
       error: (error, stackTrace) => Scaffold(

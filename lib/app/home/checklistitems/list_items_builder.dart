@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insomnia_checklist/app/home/checklistitems/empty_content.dart';
+import 'package:insomnia_checklist/services/utils.dart';
 
 /// Copyright Andrea Bozito, with modifications.
 /// Notable additions and classes by Greg Lorriman as noted.
@@ -21,8 +22,8 @@ class ListItemsBuilder<T> extends StatelessWidget {
 
   final AsyncValue data;
   final ItemWidgetBuilder<T> itemBuilder;
-  bool reorderable;
-  ReorderCallback? onReorder;
+  final bool reorderable;
+  final ReorderCallback? onReorder;
   final bool Function(T item)? filter;
   final _random = Random(3); //used for keys
   final Widget? emptyContent;
@@ -46,7 +47,7 @@ class ListItemsBuilder<T> extends StatelessWidget {
           return emptyContent ?? const EmptyContent();
         }
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(child: basicLoadingIndicator()),
       error: (e, st) => EmptyContent(
         title: e.toString(), //'Something went wrong',
         message:

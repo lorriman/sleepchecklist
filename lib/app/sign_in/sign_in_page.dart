@@ -65,7 +65,7 @@ class SignInPageContents extends StatelessWidget {
         elevation: 2.0,
         title: Text(title),
       ),
-      backgroundColor: Colors.grey[200],
+      //backgroundColor: Colors.grey[200],
       body: _buildSignIn(context),
     );
   }
