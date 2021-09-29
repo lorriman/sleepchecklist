@@ -22,6 +22,8 @@ import 'checklistitems_view_model.dart';
 typedef RatingEvent = Future<void> Function(BuildContext context,
     ChecklistItemTileModel checklistItemListTileModel, double rating);
 
+//this is Stateful because of a kludge we are doing in the init method.
+//todo: get rid of the kludge. priority: low
 class ChecklistItemsPage extends StatefulWidget {
   @override
   _ChecklistItemsPageState createState() => _ChecklistItemsPageState();
@@ -32,10 +34,8 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
   void initState() {
     super.initState();
     //kludge: fetching this data with checklistItemListTileModelStreamProvider
-    // also rewrites any null 'ordinal' items.
+    // also rewrites any null 'ordinal' items if they exist.
     //See [ChecklistItem.ordinal] for why.
-    //We could do this more elegantly but it would increase
-    //boiler plate significantly for one minor purpose.
     final params = CheckListItemsPageParametersProvider(DateTime.now());
     context.read(checklistItemTileModelStreamProvider(params));
   }
@@ -65,14 +65,14 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
       key: Key('root_myapp_consumer'),
       builder: (context, watch, _) {
         final DateTime date = watch(itemsDateProvider).state;
-        final editItems = watch(editItemsProvider).state;
+        final isEditingItems = watch(editItemsProvider).state;
         watch(newDayProvider).data;
 
         return Scaffold(
           drawer: Drawer(child: Settings()),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           //FloatingAction is custom due to not working well with CupertinoTabScaffold
-          floatingActionButton: editItems ? FloatingAction() : null,
+          floatingActionButton: isEditingItems ? FloatingAction() : null,
           appBar: AppBar(
             title: Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -86,7 +86,7 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
               if (!kReleaseMode)
                 IconButton(
                     icon: Icon(Icons.list_alt), onPressed: debugPopulate),
-              _editButton(context, editItems),
+              _editButton(context, isEditingItems),
             ],
           ),
           body: LayoutBuilder(builder: (_, constraints) {
@@ -102,7 +102,7 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
 
   Widget _contents(BuildContext context, ScopedReader watch, DateTime date) {
     //providers
-    final editingItems = watch(editItemsProvider).state;
+    final isEditingItems = watch(editItemsProvider).state;
     final tileModelsAsyncValue = watch(checklistItemTileModelStreamProvider(
         CheckListItemsPageParametersProvider(date)));
     late List<ChecklistItemTileModel> models;
@@ -119,7 +119,7 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
     return ListItemsBuilderV2<ChecklistItemTileModel>(
         data: tileModelsAsyncValue,
         //filter: (item) => item.trash == false,
-        reorderable: editingItems,
+        reorderable: isEditingItems,
         onReorder: (oldI, newI) => _onReorder(oldI, newI, tileModelsAsyncValue),
         itemBuilder: (context, model) {
           final tile = ChecklistItemExpandedTile(
@@ -129,7 +129,7 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
             checklistItemTileModel: model,
             onEdit: () => model.edit(context),
           );
-          if (!editingItems) {
+          if (!isEditingItems) {
             return tile;
           } else {
             return _wrapDismissable(tile, models, model);
@@ -146,7 +146,7 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
           alignment: Alignment.centerLeft,
           child: Icon(Icons.delete_forever_rounded)),
       direction: DismissDirection.startToEnd,
-      onDismissed: (_) => _onDismissWithSnackbar(models, model),
+      onDismissed: (_) => _onDismissWithSnackbar(context, models, model),
       child: tile,
     );
   }
@@ -159,19 +159,14 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
     }
   }
 
-  void _onDismissWithSnackbar(
+  void _onDismissWithSnackbar(BuildContext context,
       List<ChecklistItemTileModel> models, ChecklistItemTileModel model) {
-    {
-      setState(() {
-        models.remove(model);
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        duration: Duration(seconds: 1),
-        content: Text('Item in bin, and can be restored'),
-      ));
+    _trashItem(context, model);
 
-      _onTrash(context, model);
-    }
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      duration: Duration(seconds: 1),
+      content: Text('Item in bin, and can be restored'),
+    ));
   }
 
   void _onReorder(int oldIndex, int newIndex,
@@ -223,12 +218,12 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
     }
   }
 
-  Future<void> _onTrash(BuildContext context,
+  Future<void> _trashItem(BuildContext context,
       ChecklistItemTileModel checklistItemListTileModel) async {
     try {
       await checklistItemListTileModel.setTrash(trash: true);
     } catch (e) {
-      logger.e('_ChecklistItemsPageState._onTrash', e);
+      logger.e('_ChecklistItemsPageState._trashItem', e);
       unawaited(showExceptionAlertDialog(
         context: context,
         title: 'Operation failed',

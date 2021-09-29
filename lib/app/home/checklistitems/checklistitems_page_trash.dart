@@ -12,15 +12,7 @@ import '../settings.dart';
 import 'checklistitems_providers.dart';
 import 'checklistitems_tile_model.dart';
 
-class ChecklistItemsPageTrash extends StatefulWidget {
-  const ChecklistItemsPageTrash();
-
-  @override
-  _ChecklistItemsPageTrashState createState() =>
-      _ChecklistItemsPageTrashState();
-}
-
-class _ChecklistItemsPageTrashState extends State<ChecklistItemsPageTrash> {
+class ChecklistItemsPageTrash extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer(
@@ -35,49 +27,6 @@ class _ChecklistItemsPageTrashState extends State<ChecklistItemsPageTrash> {
         );
       },
     );
-  }
-
-  Future<void> _onUnTrash(BuildContext context,
-      ChecklistItemTileModel checklistItemListTileModel) async {
-    try {
-      await checklistItemListTileModel.setTrash(trash: false);
-    } catch (e) {
-      logger.e('_ChecklistItemsPagev2State._onTrash', e);
-      unawaited(showExceptionAlertDialog(
-        context: context,
-        title: 'Operation failed',
-        exception: e,
-      ));
-    }
-  }
-
-  Widget _trashHeader() {
-    return Container(
-      padding: EdgeInsets.all(8),
-      child: Row(children: [
-        Icon(Icons.delete_forever_rounded, size: 40.0),
-        Expanded(child: Container()),
-        Text('Swipe left to restore items'),
-      ]),
-    );
-  }
-
-  Key _generateListItemKey(ChecklistItemTileModel model) {
-    if (global_testing_active == TestingEnum.none) {
-      return Key('trash_checklistItem-${model.id}');
-    } else {
-      return Key('trash_dismissable_checklistItem-trash${model.ordinal}');
-    }
-  }
-
-  void _onDismissWithSnackbar(
-      List<ChecklistItemTileModel> models, ChecklistItemTileModel model) {
-    setState(() {
-      models.remove(model);
-      _onUnTrash(context, model);
-    });
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        duration: Duration(seconds: 1), content: Text('item restored')));
   }
 
   Widget _buildContents(BuildContext context, ScopedReader watch) {
@@ -112,7 +61,7 @@ class _ChecklistItemsPageTrashState extends State<ChecklistItemsPageTrash> {
                 child: Text('restore'))),
         direction: DismissDirection.endToStart,
         onDismissed: (direction) =>
-            _onDismissWithSnackbar(models, checklistItemListTileModel),
+            _onDismissWithSnackbar(context, models, checklistItemListTileModel),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: ListTile(
@@ -128,5 +77,48 @@ class _ChecklistItemsPageTrashState extends State<ChecklistItemsPageTrash> {
         ),
       ),
     );
+  }
+
+  Future<void> _unTrashItem(BuildContext context,
+      ChecklistItemTileModel checklistItemListTileModel) async {
+    try {
+      await checklistItemListTileModel.setTrash(trash: false);
+    } catch (e) {
+      logger.e('_ChecklistItemsPagev2State._onTrash', e);
+      unawaited(showExceptionAlertDialog(
+        context: context,
+        title: 'Operation failed',
+        exception: e,
+      ));
+    }
+  }
+
+  Widget _trashHeader() {
+    return Container(
+      padding: EdgeInsets.all(8),
+      child: Row(children: [
+        Icon(Icons.delete_forever_rounded, size: 40.0),
+        Expanded(child: Container()),
+        Text('Swipe left to restore items'),
+      ]),
+    );
+  }
+
+  Key _generateListItemKey(ChecklistItemTileModel model) {
+    if (global_testing_active == TestingEnum.none) {
+      return Key('trash_checklistItem-${model.id}');
+    } else {
+      return Key('trash_dismissable_checklistItem-trash${model.ordinal}');
+    }
+  }
+
+  void _onDismissWithSnackbar(BuildContext context,
+      List<ChecklistItemTileModel> models, ChecklistItemTileModel model) {
+    //setState(() {
+    // models.remove(model);
+    _unTrashItem(context, model);
+    // });
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: Duration(seconds: 1), content: Text('item restored')));
   }
 }

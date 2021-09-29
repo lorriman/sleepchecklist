@@ -29,7 +29,7 @@ class ChecklistItemExpandedTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final darkMode = watch(darkModeProvider).state;
+    final isDarkMode = watch(darkModeProvider).state;
     final isEditingItems = watch(editItemsProvider).state;
     const borderRadius = 40.0;
 
@@ -59,7 +59,7 @@ class ChecklistItemExpandedTile extends ConsumerWidget {
                   RatingBar.builder(
                     initialRating: rating,
                     glowRadius: 20,
-                    itemBuilder: darkMode
+                    itemBuilder: isDarkMode
                         //RatingsBar doesn't directly support different icons for
                         // selected/unselected, so we need to customise it
                         ? _darkModeRatingsBar
