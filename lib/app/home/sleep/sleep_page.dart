@@ -139,7 +139,7 @@ class SleepPage extends ConsumerWidget {
         ),
       );
     }
-    return ListItemsBuilderV1<SleepRating>(
+    return ListItemsBuilder<SleepRating>(
         data: sleepRatingsAsyncValue,
         itemBuilder: (context, sleepRating) => Container(
               key: Key('sleepRating-${sleepRating.date.toString}'),

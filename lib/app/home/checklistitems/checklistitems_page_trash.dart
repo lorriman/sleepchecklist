@@ -6,11 +6,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insomnia_checklist/app/home/checklistitems/checklistitem_list_tile.dart';
 import 'package:insomnia_checklist/app/home/checklistitems/list_items_builder.dart';
 import 'package:insomnia_checklist/services/globals.dart';
+import 'package:insomnia_checklist/services/utils.dart';
 import 'package:pedantic/pedantic.dart';
 
 import '../settings.dart';
 import 'checklistitems_providers.dart';
 import 'checklistitems_tile_model.dart';
+import 'empty_content.dart';
 
 class ChecklistItemsPageTrash extends StatelessWidget {
   @override
@@ -23,33 +25,28 @@ class ChecklistItemsPageTrash extends StatelessWidget {
           appBar: AppBar(
             title: Text('Trash - swipe left to restore'),
           ),
-          body: _buildContents(context, watch),
+          body: _contents(context, watch),
         );
       },
     );
   }
 
-  Widget _buildContents(BuildContext context, ScopedReader watch) {
+  Widget _contents(BuildContext context, ScopedReader watch) {
     final checklistItemsAsyncValue =
         watch(checklistTrashItemListTileModelStreamProvider);
     late List<ChecklistItemTileModel> models;
-    checklistItemsAsyncValue.when(data: (m) {
-      models = m;
-    }, loading: () {
-      return Center(
-        child: Container(
-          height: 100,
-          width: 100,
-          child: CircularProgressIndicator.adaptive(),
-        ),
-      );
-    }, error: (e, st) {
-      logger.e('checklistItemsAsyncValue.when', e, st);
-      return Text(e.toString());
-    });
-    return ListItemsBuilderV2<ChecklistItemTileModel>(
+    checklistItemsAsyncValue.when(
+      data: (m) => models = m,
+      loading: () => basicLoadingIndicator,
+      error: (e, st) {
+        logger.e('checklistItemsAsyncValue.when', e, st);
+        return Text(e.toString());
+      },
+    );
+    return ListItemsBuilder<ChecklistItemTileModel>(
       data: checklistItemsAsyncValue,
       filter: (item) => item.trash,
+      emptyContent: EmptyContent(message: ''),
       itemBuilder: (context, checklistItemListTileModel) => Dismissible(
         key: _generateListItemKey(checklistItemListTileModel),
         background: Container(

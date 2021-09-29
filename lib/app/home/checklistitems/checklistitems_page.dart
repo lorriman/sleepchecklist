@@ -116,7 +116,7 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
       },
     );
 
-    return ListItemsBuilderV2<ChecklistItemTileModel>(
+    return ListItemsBuilder<ChecklistItemTileModel>(
         data: tileModelsAsyncValue,
         //filter: (item) => item.trash == false,
         reorderable: isEditingItems,

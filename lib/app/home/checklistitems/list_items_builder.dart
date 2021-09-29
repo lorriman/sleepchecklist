@@ -8,73 +8,44 @@ import 'package:insomnia_checklist/app/home/checklistitems/empty_content.dart';
 
 typedef ItemWidgetBuilder<T> = Widget Function(BuildContext context, T item);
 
-class ListItemsBuilderV1<T> extends StatelessWidget {
-  const ListItemsBuilderV1({
-    Key? key,
-    required this.data,
-    required this.itemBuilder,
-  }) : super(key: key);
-  final AsyncValue<Map<DateTime, T>?> data;
-  final ItemWidgetBuilder<T> itemBuilder;
-
-  @override
-  Widget build(BuildContext context) {
-    return data.when(
-      data: (items) => (items == null ? false : items.isNotEmpty)
-          ? _buildList(items, null)
-          : const EmptyContent(),
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, st) => EmptyContent(
-        title: e.toString(), //'Something went wrong',
-        message:
-            st?.toString() ?? 'no stack trace', //'Can\'t load items right now',
-      ),
-    );
-  }
-
-  Widget _buildList(Map<DateTime, T>? unFilteredItems, String? search) {
-    final items = unFilteredItems;
-    if (items == null) {
-      return Text('no items');
-    }
-    final List<T> itemsAsList = items.values.toList();
-
-    return ListView.separated(
-      physics: BouncingScrollPhysics(),
-      itemCount: items.length + 2,
-      separatorBuilder: (context, index) => const Divider(height: 1.0),
-      itemBuilder: (context, index) {
-        if (index == 0 || index == itemsAsList.length + 1) {
-          return Container(); // zero height: not visible
-        }
-        return itemBuilder(context, itemsAsList[index - 1]);
-      },
-    );
-  }
-}
-
-class ListItemsBuilderV2<T> extends StatelessWidget {
-  ListItemsBuilderV2({
+class ListItemsBuilder<T> extends StatelessWidget {
+  ListItemsBuilder({
     Key? key,
     required this.data,
     required this.itemBuilder,
     this.reorderable = false,
     this.onReorder,
     this.filter,
+    this.emptyContent,
   }) : super(key: key);
-  final AsyncValue<List<T>> data;
+
+  final AsyncValue data;
   final ItemWidgetBuilder<T> itemBuilder;
   bool reorderable;
   ReorderCallback? onReorder;
   final bool Function(T item)? filter;
   final _random = Random(3); //used for keys
+  final Widget? emptyContent;
 
   @override
   Widget build(BuildContext context) {
     return data.when(
-      data: (items) => items.isNotEmpty
-          ? _buildList(items, filter: filter)
-          : const EmptyContent(),
+      data: (dynamic items) {
+        late List<T> renderedItems;
+        if (items is Map) {
+          renderedItems = items.values.toList() as List<T>;
+        } else if (items is List) {
+          renderedItems = items as List<T>;
+        } else {
+          throw Exception(
+              'items must be a List or Map in ListItemsBuilder.build');
+        }
+        if (renderedItems.isNotEmpty) {
+          return _buildList(renderedItems, filter: filter);
+        } else {
+          return emptyContent ?? const EmptyContent();
+        }
+      },
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, st) => EmptyContent(
         title: e.toString(), //'Something went wrong',

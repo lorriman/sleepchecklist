@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class EmptyContent extends StatelessWidget {
   const EmptyContent({
     Key? key,
-    this.title = 'Nothing here',
+    this.title = 'Wow! Big Empty',
     this.message = 'Add a new item to get started',
   }) : super(key: key);
   final String title;
@@ -20,11 +20,11 @@ class EmptyContent extends StatelessWidget {
         children: <Widget>[
           SelectableText(
             title,
-            style: const TextStyle(fontSize: 32.0, color: Colors.black54),
+            style: const TextStyle(fontSize: 32.0),
           ),
           SelectableText(
             message,
-            style: const TextStyle(fontSize: 16.0, color: Colors.black54),
+            style: const TextStyle(fontSize: 16.0),
           ),
         ],
       ),
