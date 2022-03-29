@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insomnia_checklist/services/shared_preferences_service.dart';
-import 'package:state_notifier/state_notifier.dart';
 
 /// Copyright Andrea Bozito, with modifications.
 /// Notable additions and classes by Greg Lorriman as noted.

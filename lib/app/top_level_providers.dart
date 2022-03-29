@@ -30,8 +30,8 @@ final authStateChangesProvider = StreamProvider<User?>(
 final databaseProvider = Provider<Repository>((ref) {
   final auth = ref.watch(authStateChangesProvider);
 
-  if (auth.data?.value?.uid != null) {
-    return Repository(uid: auth.data!.value!.uid);
+  if (auth.asData?.value?.uid != null) {
+    return Repository(uid: auth.asData!.value!.uid);
   }
   throw UnimplementedError();
 });

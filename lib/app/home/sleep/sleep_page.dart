@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insomnia_checklist/app/home/checklistitems/list_items_builder.dart';
@@ -132,7 +131,7 @@ class SleepPage extends ConsumerWidget {
       BuildContext context, WidgetRef ref, DateTime date) {
     final sleepRatingsAsyncValue =
         ref.watch(sleepRatingsForMonthStreamProvider(date));
-    if (sleepRatingsAsyncValue.data?.value?.isEmpty ?? false) {
+    if (sleepRatingsAsyncValue.asData?.value?.isEmpty ?? false) {
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Text(

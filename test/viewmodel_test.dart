@@ -1,7 +1,6 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:insomnia_checklist/app/home/checklistitems/checklistitem_list_tile.dart';
 import 'package:insomnia_checklist/app/home/models/check_list_item.dart';
 import 'package:insomnia_checklist/services/repository.dart';
 import 'package:insomnia_checklist/services/firestoreservice.dart';

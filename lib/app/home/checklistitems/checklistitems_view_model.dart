@@ -5,7 +5,6 @@ import 'package:insomnia_checklist/app/home/checklistitems/rating_checklistitem.
 import 'package:insomnia_checklist/app/home/models/check_list_item.dart';
 import 'package:insomnia_checklist/services/repository.dart';
 import 'package:insomnia_checklist/services/utils.dart';
-import 'checklistitem_list_tile.dart';
 import 'checklistitems_tile_model.dart';
 
 class ChecklistItemsViewModel {

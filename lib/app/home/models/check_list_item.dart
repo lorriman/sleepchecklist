@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 
 enum MealTime { breakfast, lunch, supper, nightcap }
 

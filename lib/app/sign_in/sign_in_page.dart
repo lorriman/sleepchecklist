@@ -6,7 +6,6 @@ import 'package:insomnia_checklist/app/sign_in/sign_in_view_model.dart';
 import 'package:insomnia_checklist/app/sign_in/sign_in_button.dart';
 import 'package:insomnia_checklist/constants/keys.dart';
 import 'package:insomnia_checklist/constants/strings.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:insomnia_checklist/routing/app_router.dart';
 

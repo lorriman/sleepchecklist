@@ -4,7 +4,6 @@ import 'package:insomnia_checklist/services/globals.dart';
 import 'package:insomnia_checklist/services/utils.dart';
 
 import '../../top_level_providers.dart';
-import 'checklistitem_list_tile.dart';
 import 'checklistitems_tile_model.dart';
 import 'checklistitems_view_model.dart';
 

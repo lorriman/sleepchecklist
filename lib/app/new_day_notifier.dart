@@ -23,6 +23,7 @@ Stream<DateTime> newDayStream(Duration interval) {
   Stream<DateTime> stop() {
     timer?.cancel();
     timer = null;
+    controller.close(); //todo: check this works
     return controller.stream;
   }
 

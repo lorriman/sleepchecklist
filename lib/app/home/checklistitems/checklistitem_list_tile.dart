@@ -1,17 +1,14 @@
 // ignore : prefer_const_constructors
 
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:insomnia_checklist/app/home/models/check_list_item.dart';
 import 'package:insomnia_checklist/app/home/checklistitems/checklistitems_page.dart';
-import 'package:insomnia_checklist/services/repository.dart';
 
 import '../../top_level_providers.dart';
 import 'checklistitems_tile_model.dart';
-import 'edit_checklistitem_page.dart';
 
 class ChecklistItemExpandedTile extends ConsumerWidget {
   const ChecklistItemExpandedTile({
@@ -105,12 +102,12 @@ class ChecklistItemExpandedTile extends ConsumerWidget {
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Theme.of(context).accentColor.withAlpha(30),
+              color: Theme.of(context).colorScheme.secondary.withAlpha(30),
               blurRadius: 5,
               spreadRadius: 1,
             ),
             BoxShadow(
-              color: Theme.of(context).accentColor.withAlpha(30),
+              color: Theme.of(context).colorScheme.secondary.withAlpha(30),
               blurRadius: 5,
               spreadRadius: 1,
             ),
