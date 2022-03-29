@@ -19,18 +19,18 @@ final entriesTileModelStreamProvider = StreamProvider.autoDispose<List<EntriesLi
 */
 class TrackingPage extends ConsumerWidget {
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       drawer: Drawer(child: Settings()),
       appBar: AppBar(
         title: const Text(Strings.tracking),
         elevation: 2.0,
       ),
-      body: _buildContents(context, watch),
+      body: _buildContents(context, ref),
     );
   }
 
-  Widget _buildContents(BuildContext context, ScopedReader watch) {
+  Widget _buildContents(BuildContext context, WidgetRef ref) {
     /*
     final entriesTileModelStream = watch(entriesTileModelStreamProvider);
     return ListItemsBuilder<EntriesListTileModel>(

@@ -9,10 +9,10 @@ import 'package:insomnia_checklist/constants/keys.dart';
 import 'package:insomnia_checklist/constants/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:insomnia_checklist/services/globals.dart';
-import 'package:pedantic/pedantic.dart';
+//import 'package:pedantic/pedantic.dart';
 import 'package:flutter/foundation.dart';
 
-class AccountPage extends StatelessWidget {
+class AccountPage extends ConsumerWidget {
   Future<void> _signOut(BuildContext context, FirebaseAuth firebaseAuth) async {
     try {
       await firebaseAuth.signOut();
@@ -42,8 +42,8 @@ class AccountPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final firebaseAuth = context.read(firebaseAuthProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final firebaseAuth = ref.read(firebaseAuthProvider);
     final user = firebaseAuth.currentUser!;
     return Scaffold(
       appBar: AppBar(

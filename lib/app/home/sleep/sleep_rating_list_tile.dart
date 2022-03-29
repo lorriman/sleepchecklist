@@ -10,7 +10,7 @@ import 'package:insomnia_checklist/app/top_level_providers.dart';
 import 'package:insomnia_checklist/services/utils.dart';
 
 typedef OnSleepRating = Future<void> Function(
-    BuildContext context, SleepRating sleepRating);
+    BuildContext context, WidgetRef ref, SleepRating sleepRating);
 
 class SleepRatingExpandedTile extends ConsumerWidget {
   const SleepRatingExpandedTile({
@@ -23,8 +23,8 @@ class SleepRatingExpandedTile extends ConsumerWidget {
   final OnSleepRating? onRating;
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    watch(sleepDateProvider).state;
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(sleepDateProvider.state).state;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
       child: Material(
@@ -57,8 +57,8 @@ class SleepRatingExpandedTile extends ConsumerWidget {
                   if (onRating != null) {
                     final SleepRating newSleepRating =
                         sleepRating.copy(newValue: rating);
-                    onRating!(context, newSleepRating);
-                    context.read(itemsDateProvider).state = sleepRating.date;
+                    onRating!(context, ref, newSleepRating);
+                    ref.read(itemsDateProvider.state).state = sleepRating.date;
                   }
                 },
               ),

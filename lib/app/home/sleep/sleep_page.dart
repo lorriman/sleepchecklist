@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +10,7 @@ import 'package:insomnia_checklist/app/home/sleep/sleep_rating_list_tile.dart';
 import 'package:insomnia_checklist/app/top_level_providers.dart';
 import 'package:insomnia_checklist/services/globals.dart';
 import 'package:intl/intl.dart';
-import 'package:pedantic/pedantic.dart';
+//import 'package:pedantic/pedantic.dart';
 import 'package:insomnia_checklist/services/repository.dart';
 import 'package:insomnia_checklist/services/utils.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
@@ -65,9 +67,9 @@ class SleepPage extends ConsumerWidget {
 
   const SleepPage();
 
-  Future<void> _onRating(BuildContext context, SleepRating sleepRating) async {
+  Future<void> _onRating(BuildContext context, WidgetRef ref, SleepRating sleepRating) async {
     try {
-      final database = context.read<Repository>(databaseProvider);
+      final database = ref.read<Repository>(databaseProvider);
 
       await database.setSleepRating(sleepRating);
     } catch (e) {
@@ -81,8 +83,8 @@ class SleepPage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final date = watch(sleepDateProvider).state;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final date = ref.watch(sleepDateProvider.state).state;
     return Scaffold(
       drawer: Drawer(child: Settings()),
       appBar: AppBar(
@@ -92,7 +94,7 @@ class SleepPage extends ConsumerWidget {
             ElevatedButton(
               child: Text(DateFormat.yMMMM().format(date)),
               onLongPress: () {
-                context.read(sleepDateProvider).state =
+                ref.read(sleepDateProvider.state).state =
                     DateTime.now().dayBefore();
               },
               onPressed: () {
@@ -100,10 +102,10 @@ class SleepPage extends ConsumerWidget {
                   context: context,
                   firstDate: DateTime(DateTime.now().year - 3, 1),
                   lastDate: DateTime(DateTime.now().year, DateTime.now().month),
-                  initialDate: context.read(sleepDateProvider).state,
+                  initialDate: ref.read(sleepDateProvider.state).state,
                 ).then((date) {
                   if (date != null) {
-                    context.read(sleepDateProvider).state = date;
+                    ref.read(sleepDateProvider.state).state = date;
                   }
                 });
               },
@@ -122,14 +124,14 @@ class SleepPage extends ConsumerWidget {
         //Strings.checklistItems),
       ),
       body: Column(
-          children: [Flexible(child: _buildContents(context, watch, date))]),
+          children: [Flexible(child: _buildContents(context, ref, date))]),
     );
   }
 
   Widget _buildContents(
-      BuildContext context, ScopedReader watch, DateTime date) {
+      BuildContext context, WidgetRef ref, DateTime date) {
     final sleepRatingsAsyncValue =
-        watch(sleepRatingsForMonthStreamProvider(date));
+        ref.watch(sleepRatingsForMonthStreamProvider(date));
     if (sleepRatingsAsyncValue.data?.value?.isEmpty ?? false) {
       return Padding(
         padding: const EdgeInsets.all(16.0),
@@ -141,7 +143,7 @@ class SleepPage extends ConsumerWidget {
     }
     return ListItemsBuilder<SleepRating>(
         data: sleepRatingsAsyncValue,
-        itemBuilder: (context, sleepRating) => Container(
+        itemBuilder: (context, ref, sleepRating) => Container(
               key: Key('sleepRating-${sleepRating.date.toString}'),
               child: Container(
                 alignment: Alignment.centerLeft,

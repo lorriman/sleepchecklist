@@ -6,7 +6,7 @@ import 'package:state_notifier/state_notifier.dart';
 /// Notable additions and classes by Greg Lorriman as noted.
 
 final onboardingViewModelProvider =
-    StateNotifierProvider<OnboardingViewModel>((ref) {
+    StateNotifierProvider<OnboardingViewModel, bool>((ref) {
   final sharedPreferencesService = ref.watch(sharedPreferencesServiceProvider);
   return OnboardingViewModel(sharedPreferencesService);
 });

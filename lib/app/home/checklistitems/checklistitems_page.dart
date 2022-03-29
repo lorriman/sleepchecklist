@@ -1,6 +1,7 @@
+import 'dart:async';
+
 import 'package:alert_dialogs/alert_dialogs.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,24 +13,24 @@ import 'package:insomnia_checklist/app/top_level_providers.dart';
 import 'package:insomnia_checklist/constants/keys.dart';
 import 'package:insomnia_checklist/services/utils.dart';
 import 'package:insomnia_checklist/services/globals.dart';
-import 'package:pedantic/pedantic.dart';
+//import 'package:pedantic/pedantic.dart';
 
 import '../settings.dart';
 import 'checklistitems_providers.dart';
 import 'checklistitems_tile_model.dart';
 import 'checklistitems_view_model.dart';
 
-typedef RatingEvent = Future<void> Function(BuildContext context,
+typedef RatingEvent = Future<void> Function(BuildContext context, WidgetRef ref,
     ChecklistItemTileModel checklistItemListTileModel, double rating);
 
 //this is Stateful because of a kludge we are doing in the init method.
 //todo: get rid of the kludge. priority: low
-class ChecklistItemsPage extends StatefulWidget {
+class ChecklistItemsPage extends ConsumerStatefulWidget {
   @override
   _ChecklistItemsPageState createState() => _ChecklistItemsPageState();
 }
 
-class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
+class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
   @override
   void initState() {
     super.initState();
@@ -37,7 +38,7 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
     // also rewrites any null 'ordinal' items if they exist.
     //See [ChecklistItem.ordinal] for why.
     final params = CheckListItemsPageParametersProvider(DateTime.now());
-    context.read(checklistItemTileModelStreamProvider(params));
+    ref.read(checklistItemTileModelStreamProvider(params));
   }
 
   /// inject development data
@@ -45,7 +46,7 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
     if (!kReleaseMode) {
       //create some data for dev purposes
       if (FirebaseAuth.instance.currentUser != null) {
-        final database = context.read(databaseProvider);
+        final database = ref.read(databaseProvider);
         for (int i = 1; i < 15; i++) {
           database.setChecklistItem(ChecklistItem(
             id: ChecklistItem.newId(),
@@ -64,9 +65,9 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
     return Consumer(
       key: Key('root_myapp_consumer'),
       builder: (context, watch, _) {
-        final DateTime date = watch(itemsDateProvider).state;
-        final isEditingItems = watch(editItemsProvider).state;
-        watch(newDayProvider).data;
+        final DateTime date = ref.watch(itemsDateProvider.state).state;
+        final isEditingItems = ref.watch(editItemsProvider.state).state;
+        ref.watch(newDayProvider).asData;
 
         return Scaffold(
           drawer: Drawer(child: Settings()),
@@ -77,33 +78,33 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
             title: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                _dateBackButton(context, date),
-                _dayButton(context, date),
-                _dateForwardButton(context, date),
+                _dateBackButton(ref, context, date),
+                _dayButton(ref, context, date),
+                _dateForwardButton(ref, context, date),
               ],
             ), //Strings.checklistItems),
             actions: [
               if (!kReleaseMode)
                 IconButton(
                     icon: Icon(Icons.list_alt), onPressed: debugPopulate),
-              _editButton(context, isEditingItems),
+              _editButton( context, ref, isEditingItems),
             ],
           ),
           body: LayoutBuilder(builder: (_, constraints) {
             return SizedBox(
                 //kludge, ReorderableListView doesn't work with the navigation bar
                 height: constraints.maxHeight - 50,
-                child: _contents(context, watch, date));
+                child: _contents( context,ref , date));
           }),
         );
       },
     );
   }
 
-  Widget _contents(BuildContext context, ScopedReader watch, DateTime date) {
+  Widget _contents( BuildContext context, WidgetRef ref, DateTime date) {
     //providers
-    final isEditingItems = watch(editItemsProvider).state;
-    final tileModelsAsyncValue = watch(checklistItemTileModelStreamProvider(
+    final isEditingItems = ref.watch(editItemsProvider.state).state;
+    final tileModelsAsyncValue = ref.watch(checklistItemTileModelStreamProvider(
         CheckListItemsPageParametersProvider(date)));
     late List<ChecklistItemTileModel> models;
 
@@ -120,8 +121,8 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
         data: tileModelsAsyncValue,
         //filter: (item) => item.trash == false,
         reorderable: isEditingItems,
-        onReorder: (oldI, newI) => _onReorder(oldI, newI, tileModelsAsyncValue),
-        itemBuilder: (context, model) {
+        onReorder: (oldI, newI) => _onReorder(ref, oldI, newI, tileModelsAsyncValue),
+        itemBuilder: (context, ref, model) {
           final tile = ChecklistItemExpandedTile(
             key: _generateListItemKey(model),
             rating: model.rating ?? 0.0,
@@ -169,7 +170,7 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
     ));
   }
 
-  void _onReorder(int oldIndex, int newIndex,
+  void _onReorder(WidgetRef ref, int oldIndex, int newIndex,
       AsyncValue<List<ChecklistItemTileModel>> asyncValue) {
     asyncValue.whenData((models) {
       setState(() {
@@ -179,13 +180,13 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
         final element = models.removeAt(oldIndex);
         models.insert(index, element);
       });
-      final database = context.read(databaseProvider);
+      final database = ref.read(databaseProvider);
       final vm = ChecklistItemsViewModel(database: database);
       vm.rewriteSortOrdinals(models);
     });
   }
 
-  void _datePick(BuildContext context, DateTime date) {
+  void _datePick(WidgetRef ref, BuildContext context, DateTime date) {
     showDatePicker(
       context: context,
       firstDate: DateTime(DateTime.now().year - 3, 1),
@@ -197,16 +198,16 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
       initialDate: date,
     ).then((date) {
       if (date != null) {
-        context.read(itemsDateProvider).state = date;
-        _updateSleepDate(context, date);
+        ref.read(itemsDateProvider.state).state = date;
+        _updateSleepDate(ref, context, date);
       }
     });
   }
 
   Future<void> _onRating(
-      BuildContext context, ChecklistItemTileModel model, double rating) async {
+       BuildContext context, WidgetRef ref, ChecklistItemTileModel model, double rating) async {
     try {
-      final day = context.read(itemsDateProvider).state;
+      final day = ref.read(itemsDateProvider.state).state;
       await model.setRating(rating, day);
     } catch (e) {
       logger.e('_ChecklistItemsPageState._onRating', e);
@@ -232,31 +233,31 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
     }
   }
 
-  Future<void> _updateSleepDate(BuildContext context, DateTime date) async {
-    context.read(sleepDateProvider).state = date;
+  Future<void> _updateSleepDate(WidgetRef ref, BuildContext context, DateTime date) async {
+    ref.read(sleepDateProvider.state).state = date;
   }
 
-  Widget _dateBackButton(BuildContext context, DateTime date) {
+  Widget _dateBackButton(WidgetRef ref, BuildContext context, DateTime date) {
     return Container(
       width: 36,
       child: IconButton(
         icon: Icon(Icons.arrow_back_ios),
         onPressed: () {
-          context.read(itemsDateProvider).state = date.dayBefore();
-          _updateSleepDate(context, date.dayBefore());
+          ref.read(itemsDateProvider.state).state = date.dayBefore();
+          _updateSleepDate(ref, context, date.dayBefore());
         },
       ),
     );
   }
 
-  Widget _dayButton(BuildContext context, DateTime date) {
+  Widget _dayButton(WidgetRef ref, BuildContext context, DateTime date) {
     return ElevatedButton(
       child: Text(ChecklistItemsViewModel.labelDate(date)),
       autofocus: true,
       onLongPress: () {
-        context.read(itemsDateProvider).state = DateTime.now();
+        ref.read(itemsDateProvider.state).state = DateTime.now();
       },
-      onPressed: () => _datePick(context, date),
+      onPressed: () => _datePick(ref, context, date),
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -267,7 +268,7 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
     );
   }
 
-  Widget _dateForwardButton(BuildContext context, DateTime date) {
+  Widget _dateForwardButton(WidgetRef ref, BuildContext context, DateTime date) {
     return Container(
       width: 40,
       child: IconButton(
@@ -275,21 +276,21 @@ class _ChecklistItemsPageState extends State<ChecklistItemsPage> {
         onPressed: date.isToday()
             ? null
             : () {
-                context.read(itemsDateProvider).state = date.dayAfter();
-                _updateSleepDate(context, date.dayAfter());
+                ref.read(itemsDateProvider.state).state = date.dayAfter();
+                _updateSleepDate(ref, context, date.dayAfter());
               },
       ),
     );
   }
 
-  Widget _editButton(BuildContext context, bool isEditing) {
+  Widget _editButton( BuildContext context, WidgetRef ref, bool isEditing) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
           key: Key(Keys.testEditToggleButton),
           child: !isEditing ? Icon(Icons.edit) : Icon(Icons.edit_off),
           onTap: () {
-            context.read(editItemsProvider).state = !isEditing;
+            ref.read(editItemsProvider.state).state = !isEditing;
           }),
     );
   }

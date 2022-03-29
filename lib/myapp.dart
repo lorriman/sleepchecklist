@@ -8,19 +8,19 @@ import 'package:insomnia_checklist/routing/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MyApp extends StatefulWidget {
+class MyApp extends ConsumerStatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
-    final firebaseAuth = context.read(firebaseAuthProvider);
+    final firebaseAuth = ref.read(firebaseAuthProvider);
 
     return Consumer(
-      builder: (context, watch, _) {
-        final darkMode = watch(darkModeProvider);
+      builder: (context, ref, _) {
+        final darkMode = ref.watch(darkModeProvider.state);
         return MaterialApp(
           themeMode: darkMode.state ? ThemeMode.dark : ThemeMode.light,
           theme: ThemeData(
@@ -34,9 +34,9 @@ class _MyAppState extends State<MyApp> {
 //      debugShowCheckedModeBanner: false,
           home: AuthWidget(
             nonSignedInBuilder: (_) => Consumer(
-              builder: (context, watch, _) {
+              builder: (context, ref, _) {
                 final didCompleteOnboarding =
-                    watch(onboardingViewModelProvider.state);
+                    ref.watch(onboardingViewModelProvider); //todo: is this .state from riverpod upgrade?
                 return didCompleteOnboarding ? SignInPage() : OnboardingPage();
               },
             ),

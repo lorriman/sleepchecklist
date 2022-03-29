@@ -5,9 +5,9 @@ import 'package:insomnia_checklist/services/shared_preferences_service.dart';
 
 import '../top_level_providers.dart';
 
-class Settings extends StatelessWidget {
+class Settings extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ListView(children: [
       DrawerHeader(
         decoration: BoxDecoration(
@@ -15,17 +15,17 @@ class Settings extends StatelessWidget {
             ),
         child: Text('Settings', style: Theme.of(context).textTheme.headline4),
       ),
-      Consumer(builder: (context, watch, _) {
-        watch(darkModeProvider);
+      Consumer(builder: (context, ref, _) {
+        ref.watch(darkModeProvider.state);
 
         return SwitchListTile(
           title:
               Text('Dark mode', style: Theme.of(context).textTheme.headline5),
-          value: context.read(darkModeProvider).state,
+          value: ref.read(darkModeProvider.state).state,
           onChanged: (value) {
-            context.read(darkModeProvider).state = value;
+            ref.read(darkModeProvider.state).state = value;
             final sharedPreferencesService =
-                context.read(sharedPreferencesServiceProvider);
+                ref.read(sharedPreferencesServiceProvider);
             sharedPreferencesService.sharedPreferences
                 .setBool('darkMode', value);
           },

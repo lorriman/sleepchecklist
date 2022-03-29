@@ -7,9 +7,9 @@ import 'package:insomnia_checklist/services/utils.dart';
 /// Copyright Andrea Bozito, with modifications.
 /// Notable additions and classes by Greg Lorriman as noted.
 
-typedef ItemWidgetBuilder<T> = Widget Function(BuildContext context, T item);
+typedef ItemWidgetBuilder<T> = Widget Function(BuildContext context, WidgetRef ref, T item);
 
-class ListItemsBuilder<T> extends StatelessWidget {
+class ListItemsBuilder<T> extends ConsumerWidget {
   ListItemsBuilder({
     Key? key,
     required this.data,
@@ -29,7 +29,7 @@ class ListItemsBuilder<T> extends StatelessWidget {
   final Widget? emptyContent;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return data.when(
       data: (dynamic items) {
         late List<T> renderedItems;
@@ -42,7 +42,7 @@ class ListItemsBuilder<T> extends StatelessWidget {
               'items must be a List or Map in ListItemsBuilder.build');
         }
         if (renderedItems.isNotEmpty) {
-          return _buildList(renderedItems, filter: filter);
+          return _buildList(ref, renderedItems, filter: filter);
         } else {
           return emptyContent ?? const EmptyContent();
         }
@@ -58,7 +58,7 @@ class ListItemsBuilder<T> extends StatelessWidget {
 
   bool _defaultFilter(T item) => true;
 
-  Widget _buildList(List<T> unFilteredItems, {bool Function(T item)? filter}) {
+  Widget _buildList(WidgetRef ref, List<T> unFilteredItems, {bool Function(T item)? filter}) {
     filter ??= _defaultFilter;
     final items = unFilteredItems.where(filter).toList();
 
@@ -73,7 +73,7 @@ class ListItemsBuilder<T> extends StatelessWidget {
                 key: Key(
                     'special container ${_random.nextDouble().toString()}')); // zero height: not visible
           }
-          return itemBuilder(context, items[index - 1]);
+          return itemBuilder(context, ref, items[index - 1]);
         },
       );
     } else {
@@ -88,7 +88,7 @@ class ListItemsBuilder<T> extends StatelessWidget {
                 key: Key(
                     'special container ${_random.nextDouble().toString()}')); // zero height: not visible
           }
-          return itemBuilder(context, items[index - 1]);
+          return itemBuilder(context, ref, items[index - 1]);
         },
       );
     }

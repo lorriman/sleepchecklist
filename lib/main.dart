@@ -25,7 +25,7 @@ Future<void> main({List<String>? args}) async {
   if (!kIsWeb &
       (!kReleaseMode || global_testing_active == TestingEnum.integration)) {
     //this requires installing and running the firebase emulator
-
+/*
     final firestoreHost = Platform.isAndroid ? '10.0.2.2' : 'localhost';
 
     FirebaseFirestore.instance.settings = Settings(
@@ -33,6 +33,7 @@ Future<void> main({List<String>? args}) async {
         sslEnabled: false,
         persistenceEnabled: false);
     await FirebaseAuth.instance.useEmulator('http://$firestoreHost:9099');
+*/
     if (global_testing_active == TestingEnum.integration) {
       await FirebaseAuth.instance.signOut();
       await sharedPreferences.setBool(

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:alert_dialogs/alert_dialogs.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -7,16 +9,16 @@ import 'package:insomnia_checklist/app/home/checklistitems/checklistitem_list_ti
 import 'package:insomnia_checklist/app/home/checklistitems/list_items_builder.dart';
 import 'package:insomnia_checklist/services/globals.dart';
 import 'package:insomnia_checklist/services/utils.dart';
-import 'package:pedantic/pedantic.dart';
+//import 'package:pedantic/pedantic.dart';
 
 import '../settings.dart';
 import 'checklistitems_providers.dart';
 import 'checklistitems_tile_model.dart';
 import 'empty_content.dart';
 
-class ChecklistItemsPageTrash extends StatelessWidget {
+class ChecklistItemsPageTrash extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Consumer(
       key: Key('root_myapp_consumer'),
       builder: (context, watch, _) {
@@ -31,9 +33,9 @@ class ChecklistItemsPageTrash extends StatelessWidget {
     );
   }
 
-  Widget _contents(BuildContext context, ScopedReader watch) {
+  Widget _contents(BuildContext context, WidgetRef ref) {
     final checklistItemsAsyncValue =
-        watch(checklistTrashItemListTileModelStreamProvider);
+        ref.watch(checklistTrashItemListTileModelStreamProvider);
     late List<ChecklistItemTileModel> models;
     checklistItemsAsyncValue.when(
       data: (m) => models = m,
@@ -47,7 +49,7 @@ class ChecklistItemsPageTrash extends StatelessWidget {
       data: checklistItemsAsyncValue,
       filter: (item) => item.trash,
       emptyContent: EmptyContent(message: ''),
-      itemBuilder: (context, checklistItemListTileModel) => Dismissible(
+      itemBuilder: (context, ref, checklistItemListTileModel) => Dismissible(
         key: _generateListItemKey(checklistItemListTileModel),
         background: Container(
             color: Colors.green[200],

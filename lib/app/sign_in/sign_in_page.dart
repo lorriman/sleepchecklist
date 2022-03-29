@@ -19,11 +19,8 @@ final signInModelProvider = ChangeNotifierProvider<SignInViewModel>(
 
 class SignInPage extends ConsumerWidget {
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final signInModel = watch(signInModelProvider);
-    return ProviderListener<SignInViewModel>(
-      provider: signInModelProvider,
-      onChange: (context, model) async {
+  Widget build(BuildContext context, WidgetRef ref) {
+ref.listen<SignInViewModel>(signInModelProvider, (previous, model) async {
         if (model.error != null) {
           await showExceptionAlertDialog(
             context: context,
@@ -31,12 +28,12 @@ class SignInPage extends ConsumerWidget {
             exception: model.error,
           );
         }
-      },
-      child: SignInPageContents(
+      });
+    final signInModel = ref.watch(signInModelProvider);
+    return SignInPageContents(
         viewModel: signInModel,
         title: 'Sleep Tracking',
-      ),
-    );
+      );
   }
 }
 

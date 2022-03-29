@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,12 +10,12 @@ import 'package:insomnia_checklist/constants/keys.dart';
 import 'package:insomnia_checklist/routing/app_router.dart';
 import 'package:insomnia_checklist/services/globals.dart';
 import 'package:insomnia_checklist/services/repository.dart';
-import 'package:pedantic/pedantic.dart';
+//import 'package:pedantic/pedantic.dart';
 
 /// Copyright Andrea Bozito, with modifications.
 /// Notable additions and classes by Greg Lorriman as noted.
 
-class EditChecklistItemPage extends StatefulWidget {
+class EditChecklistItemPage extends ConsumerStatefulWidget {
   const EditChecklistItemPage({Key? key, this.checklistItem}) : super(key: key);
   final ChecklistItem? checklistItem;
 
@@ -29,7 +31,7 @@ class EditChecklistItemPage extends StatefulWidget {
   _EditChecklistItemPageState createState() => _EditChecklistItemPageState();
 }
 
-class _EditChecklistItemPageState extends State<EditChecklistItemPage> {
+class _EditChecklistItemPageState extends ConsumerState<EditChecklistItemPage> {
   final _formKey = GlobalKey<FormState>();
 
   String? _name;
@@ -53,10 +55,10 @@ class _EditChecklistItemPageState extends State<EditChecklistItemPage> {
     return false;
   }
 
-  Future<void> _submit() async {
+  Future<void> _submit(WidgetRef ref) async {
     if (_validateAndSaveForm()) {
       try {
-        final database = context.read<Repository>(databaseProvider);
+        final database = ref.read<Repository>(databaseProvider);
         final checklistItems = await database.checklistItemsStream().first;
         final allLowerCaseNames = checklistItems
             .map((checklistItem) => checklistItem.name.toLowerCase())
@@ -102,7 +104,7 @@ class _EditChecklistItemPageState extends State<EditChecklistItemPage> {
       floatingActionButton: FloatingActionButton.extended(
         key: Key(Keys.testEditItemSaveButton),
         label: Text('Save'),
-        onPressed: () => _submit(),
+        onPressed: () => _submit(ref),
       ),
       appBar: AppBar(
         elevation: 2.0,

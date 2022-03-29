@@ -28,9 +28,9 @@ class ChecklistItemExpandedTile extends ConsumerWidget {
   final RatingEvent? onRating;
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final isDarkMode = watch(darkModeProvider).state;
-    final isEditingItems = watch(editItemsProvider).state;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDarkMode = ref.watch(darkModeProvider.state).state;
+    final isEditingItems = ref.watch(editItemsProvider.state).state;
     const borderRadius = 40.0;
 
     return Container(
@@ -69,7 +69,7 @@ class ChecklistItemExpandedTile extends ConsumerWidget {
                     itemSize: 30.0,
                     direction: Axis.horizontal,
                     onRatingUpdate: (rating) =>
-                        onRating!(context, checklistItemTileModel, rating),
+                        onRating!(context, ref, checklistItemTileModel, rating),
                   )
                 ],
                 Container(width: 5),
