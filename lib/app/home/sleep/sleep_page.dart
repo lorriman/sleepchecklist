@@ -12,7 +12,9 @@ import 'package:intl/intl.dart';
 //import 'package:pedantic/pedantic.dart';
 import 'package:insomnia_checklist/services/repository.dart';
 import 'package:insomnia_checklist/services/utils.dart';
-import 'package:month_picker_dialog/month_picker_dialog.dart';
+import 'package:month_year_picker/month_year_picker.dart';
+//import 'package:month_picker_dialog/month_picker_dialog.dart';
+
 
 import '../settings.dart';
 
@@ -96,7 +98,21 @@ class SleepPage extends ConsumerWidget {
                 ref.read(sleepDateProvider.state).state =
                     DateTime.now().dayBefore();
               },
-              onPressed: () {
+              onPressed: () async {
+
+                final selected = await showMonthYearPicker(
+                  context: context,
+                  initialDate: ref.read(sleepDateProvider.state).state,
+                  firstDate: DateTime(2019),
+                  lastDate: DateTime(2023),
+                  locale: Locale('en'),
+                );
+
+                if (selected != null) {
+                  ref.read(sleepDateProvider.state).state = selected;
+                }
+
+              /*
                 showMonthPicker(
                   context: context,
                   firstDate: DateTime(DateTime.now().year - 3, 1),
@@ -106,7 +122,7 @@ class SleepPage extends ConsumerWidget {
                   if (date != null) {
                     ref.read(sleepDateProvider.state).state = date;
                   }
-                });
+                });*/
               },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(

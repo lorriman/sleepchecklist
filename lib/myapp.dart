@@ -7,6 +7,8 @@ import 'package:insomnia_checklist/app/sign_in/sign_in_page.dart';
 import 'package:insomnia_checklist/routing/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:month_year_picker/month_year_picker.dart';
 
 class MyApp extends ConsumerStatefulWidget {
   @override
@@ -23,6 +25,11 @@ class _MyAppState extends ConsumerState<MyApp> {
         final darkMode = ref.watch(darkModeProvider.state);
         return MaterialApp(
           themeMode: darkMode.state ? ThemeMode.dark : ThemeMode.light,
+          localizationsDelegates: [
+            GlobalWidgetsLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            MonthYearPickerLocalizations.delegate,
+          ],
           theme: ThemeData(
             visualDensity: VisualDensity.standard,
             primarySwatch: Colors.lightGreen,
