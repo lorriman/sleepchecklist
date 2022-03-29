@@ -23,8 +23,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  font_awesome_flutter: ^9.0.0
   flutter_vector_icons: ^1.0.0
+  font_awesome_flutter: ^9.0.0
   ionicons: ^0.1.2
   eva_icons_flutter: ^3.0.0
   fluentui_system_icons: ^1.1.115

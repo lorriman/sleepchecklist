@@ -90,6 +90,8 @@ class ChecklistItemsPageTrash extends ConsumerWidget {
     }
   }
 
+  //todo: decide on this
+  // ignore: unused_element
   Widget _trashHeader() {
     return Container(
       padding: EdgeInsets.all(8),

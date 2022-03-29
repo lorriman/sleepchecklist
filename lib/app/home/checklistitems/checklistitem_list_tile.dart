@@ -132,6 +132,7 @@ class ChecklistItemExpandedTile extends ConsumerWidget {
   }
 
   //legacy code for a different way of doing ratings.
+  // ignore: unused_element
   Widget _mealIconButton(MealTime mealTime,
       {required VoidCallback? onPressed}) {
     return Container(

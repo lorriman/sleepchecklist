@@ -46,6 +46,8 @@ class SignInPageContents extends StatelessWidget {
   static const Key emailPasswordButtonKey = Key(Keys.emailPassword);
   static const Key anonymousButtonKey = Key(Keys.anonymous);
 
+
+  // ignore: unused_element
   Future<void> _showEmailPasswordSignInPage(BuildContext context) async {
     final navigator = Navigator.of(context);
     await navigator.pushNamed(

@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:equatable/equatable.dart';
-//import 'package:meta/meta.dart';
+
+// ignore_for_file: unused_local_variable
 
 class CheckListTrackerItem extends Equatable {
   const CheckListTrackerItem({

@@ -11,7 +11,7 @@ linter:
     - avoid_bool_literals_in_conditional_expressions
     - avoid_catches_without_on_clauses
     - avoid_catching_errors
-    - avoid_classes_with_only_static_members
+#    - avoid_classes_with_only_static_members
     - avoid_double_and_int_checks
     - avoid_empty_else
     - avoid_equals_and_hash_code_on_mutable_classes
@@ -38,7 +38,8 @@ linter:
     - avoid_single_cascade_in_expression_statements
     - avoid_slow_async_io
     - avoid_types_as_parameter_names
-    - avoid_types_on_closure_parameters
+#    - always_use_package_imports
+#    - avoid_types_on_closure_parameters
     - avoid_unnecessary_containers
     - avoid_unused_constructor_parameters
     - avoid_void_async
@@ -52,9 +53,9 @@ linter:
     - comment_references
     - constant_identifier_names
     - control_flow_in_finally
-    - curly_braces_in_flow_control_structures
+#    - curly_braces_in_flow_control_structures
     - diagnostic_describe_all_properties
-    - directives_ordering
+#    - directives_ordering
     - empty_catches
     - empty_constructor_bodies
     - empty_statements

@@ -38,6 +38,7 @@ class FakeFirestoreService extends FirestoreService {
     instance = this;
   }
   @override
+  // ignore: overridden_fields
   final FirebaseFirestore firestoreInstance;
   static FirestoreService? instance;
 }
