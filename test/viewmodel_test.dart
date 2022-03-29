@@ -1,12 +1,14 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:insomnia_checklist/app/home/models/check_list_item.dart';
-import 'package:insomnia_checklist/services/repository.dart';
-import 'package:insomnia_checklist/services/firestoreservice.dart';
-import 'package:test/test.dart';
 import 'package:flutter/material.dart';
+import 'package:insomnia_checklist/app/home/checklistitems/checklistitems_tile_model.dart';
 import 'package:insomnia_checklist/app/home/checklistitems/checklistitems_view_model.dart';
+import 'package:insomnia_checklist/app/home/models/check_list_item.dart';
+import 'package:insomnia_checklist/services/firestoreservice.dart';
+import 'package:insomnia_checklist/services/repository.dart';
+import 'package:test/test.dart';
+
 import 'setup_auth_mocks.dart';
 
 typedef ModelStream = Stream<List<ChecklistItemTileModel>>;
@@ -39,6 +41,7 @@ Future<void> main() async {
       now = DateTime.now();
       final fakeFirestore = FakeFirebaseFirestore();
       //not used now but maybe in future as some libs call auth
+      // ignore: unused_local_variable
       final fakeAuth = MockFirebaseAuth(signedIn: true);
       final fakeFirestoreService =
           FakeFirestoreService(fakeFirestoreInstance: fakeFirestore);
