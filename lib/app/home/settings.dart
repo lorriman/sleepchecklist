@@ -7,6 +7,9 @@ import '../top_level_providers.dart';
 class Settings extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final darkModeState=ref.read(darkModeProvider.state);
+    final isEditingItemsState = ref.read(editItemsProvider.state);
+
     return ListView(children: [
       DrawerHeader(
         decoration: BoxDecoration(
@@ -14,22 +17,28 @@ class Settings extends ConsumerWidget {
             ),
         child: Text('Settings', style: Theme.of(context).textTheme.headline4),
       ),
-      Consumer(builder: (context, ref, _) {
-        ref.watch(darkModeProvider.state);
-
-        return SwitchListTile(
+       SwitchListTile(
           title:
               Text('Dark mode', style: Theme.of(context).textTheme.headline5),
-          value: ref.read(darkModeProvider.state).state,
+          value: darkModeState.state,
           onChanged: (value) {
-            ref.read(darkModeProvider.state).state = value;
+            darkModeState.state = value;
             final sharedPreferencesService =
                 ref.read(sharedPreferencesServiceProvider);
             sharedPreferencesService.sharedPreferences
                 .setBool('darkMode', value);
           },
-        );
-      }),
+        ),
+      SwitchListTile(
+
+        title: Text('Add/Edit items', style: Theme.of(context).textTheme.headline5),
+        value: isEditingItemsState.state,
+        onChanged: (value) {
+          //ignore: dead_null_aware_expression
+          isEditingItemsState.state = value ?? false;
+        },
+      )
+
     ]);
   }
 }

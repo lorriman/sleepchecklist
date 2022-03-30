@@ -36,7 +36,8 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
     super.initState();
     //kludge: fetching this data with checklistItemListTileModelStreamProvider
     // also rewrites any null 'ordinal' items if they exist.
-    //See [ChecklistItem.ordinal] for why.
+    // See [ChecklistItem.ordinal] for why.
+    // todo: (oneday), find better/non-kludgy way to do this
     final params = CheckListItemsPageParametersProvider(DateTime.now());
     ref.read(checklistItemTileModelStreamProvider(params));
   }
@@ -87,21 +88,20 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
               if (!kReleaseMode)
                 IconButton(
                     icon: Icon(Icons.list_alt), onPressed: debugPopulate),
-              _editButton( context, ref, isEditingItems),
             ],
           ),
           body: LayoutBuilder(builder: (_, constraints) {
             return SizedBox(
                 //kludge, ReorderableListView doesn't work with the navigation bar
                 height: constraints.maxHeight - 50,
-                child: _contents( context,ref , date));
+                child: _contents(context, ref, date));
           }),
         );
       },
     );
   }
 
-  Widget _contents( BuildContext context, WidgetRef ref, DateTime date) {
+  Widget _contents(BuildContext context, WidgetRef ref, DateTime date) {
     //providers
     final isEditingItems = ref.watch(editItemsProvider.state).state;
     final tileModelsAsyncValue = ref.watch(checklistItemTileModelStreamProvider(
@@ -121,7 +121,8 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
         data: tileModelsAsyncValue,
         //filter: (item) => item.trash == false,
         reorderable: isEditingItems,
-        onReorder: (oldI, newI) => _onReorder(ref, oldI, newI, tileModelsAsyncValue),
+        onReorder: (oldI, newI) =>
+            _onReorder(ref, oldI, newI, tileModelsAsyncValue),
         itemBuilder: (context, ref, model) {
           final tile = ChecklistItemExpandedTile(
             key: _generateListItemKey(model),
@@ -173,15 +174,16 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
   void _onReorder(WidgetRef ref, int oldIndex, int newIndex,
       AsyncValue<List<ChecklistItemTileModel>> asyncValue) {
     asyncValue.whenData((models) {
+      //todo: find a way to make the update instant
       //setState(() {
-        // removing the item at oldIndex will shorten the list by 1.
-        int index = newIndex;
-        if (oldIndex < newIndex) index -= 1;
-        //indexes are 1 based, model is 0 based
-        index-=1;
-        oldIndex-=1;
-        final element = models.removeAt(oldIndex);
-        models.insert(index, element);
+      // removing the item at oldIndex will shorten the list by 1.
+      int index = newIndex;
+      if (oldIndex < newIndex) index -= 1;
+      //indexes are 1 based, model is 0 based
+      index -= 1;
+      oldIndex -= 1;
+      final element = models.removeAt(oldIndex);
+      models.insert(index, element);
       //});
       final database = ref.read(databaseProvider);
       final vm = ChecklistItemsViewModel(database: database);
@@ -207,8 +209,8 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
     });
   }
 
-  Future<void> _onRating(
-       BuildContext context, WidgetRef ref, ChecklistItemTileModel model, double rating) async {
+  Future<void> _onRating(BuildContext context, WidgetRef ref,
+      ChecklistItemTileModel model, double rating) async {
     try {
       final day = ref.read(itemsDateProvider.state).state;
       await model.setRating(rating, day);
@@ -236,7 +238,8 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
     }
   }
 
-  Future<void> _updateSleepDate(WidgetRef ref, BuildContext context, DateTime date) async {
+  Future<void> _updateSleepDate(
+      WidgetRef ref, BuildContext context, DateTime date) async {
     ref.read(sleepDateProvider.state).state = date;
   }
 
@@ -271,7 +274,8 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
     );
   }
 
-  Widget _dateForwardButton(WidgetRef ref, BuildContext context, DateTime date) {
+  Widget _dateForwardButton(
+      WidgetRef ref, BuildContext context, DateTime date) {
     return Container(
       width: 40,
       child: IconButton(
@@ -286,17 +290,6 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
     );
   }
 
-  Widget _editButton( BuildContext context, WidgetRef ref, bool isEditing) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: InkWell(
-          key: Key(Keys.testEditToggleButton),
-          child: !isEditing ? Icon(Icons.edit) : Icon(Icons.edit_off),
-          onTap: () {
-            ref.read(editItemsProvider.state).state = !isEditing;
-          }),
-    );
-  }
 }
 
 class FloatingAction extends StatelessWidget {
