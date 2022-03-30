@@ -177,6 +177,7 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
         // removing the item at oldIndex will shorten the list by 1.
         int index = newIndex;
         if (oldIndex < newIndex) index -= 1;
+        //indexes are 1 based, model is 0 based
         index-=1;
         oldIndex-=1;
         final element = models.removeAt(oldIndex);
