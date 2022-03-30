@@ -173,13 +173,15 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
   void _onReorder(WidgetRef ref, int oldIndex, int newIndex,
       AsyncValue<List<ChecklistItemTileModel>> asyncValue) {
     asyncValue.whenData((models) {
-      setState(() {
+      //setState(() {
         // removing the item at oldIndex will shorten the list by 1.
         int index = newIndex;
         if (oldIndex < newIndex) index -= 1;
+        index-=1;
+        oldIndex-=1;
         final element = models.removeAt(oldIndex);
         models.insert(index, element);
-      });
+      //});
       final database = ref.read(databaseProvider);
       final vm = ChecklistItemsViewModel(database: database);
       vm.rewriteSortOrdinals(models);
