@@ -75,6 +75,7 @@ dependencies:
   fake_cloud_firestore: ^1.2.2
   flutter_portal: ^0.4.0
   flutter_native_splash: ^2.1.2+1
+  os_detect: ^2.0.0
 
 
 
