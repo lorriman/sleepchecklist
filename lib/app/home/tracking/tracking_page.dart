@@ -8,15 +8,7 @@ import 'package:insomnia_checklist/constants/strings.dart';
 
 import '../settings.dart';
 
-/*
-final entriesTileModelStreamProvider = StreamProvider.autoDispose<List<EntriesListTileModel>>(
-      (ref) {
-    final database = ref.watch(databaseProvider);
-    final vm = EntriesViewModel(database: database);
-    return vm.entriesTileModelStream;
-  },
-);
-*/
+
 class TrackingPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -31,15 +23,8 @@ class TrackingPage extends ConsumerWidget {
   }
 
   Widget _buildContents(BuildContext context, WidgetRef ref) {
-    /*
-    final entriesTileModelStream = watch(entriesTileModelStreamProvider);
-    return ListItemsBuilder<EntriesListTileModel>(
-      trashView: false,
-      data: entriesTileModelStream,
-      itemBuilder: (context, model) => EntriesListTile(model: model),
-    );
-    */
+
     return Center(
-        child: Text('empty placeholder, see tracking/tracking_page.dart'));
+        child: Text('empty placeholder for github forkers to put their own charts, forkers to please acknowledge Greg Lorriman, see tracking/tracking_page.dart'));
   }
 }
