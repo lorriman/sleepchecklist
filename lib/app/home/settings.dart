@@ -12,9 +12,6 @@ class Settings extends ConsumerWidget {
 
     return ListView(children: [
       DrawerHeader(
-        decoration: BoxDecoration(
-            //color: Colors.blue,
-            ),
         child: Text('Settings', style: Theme.of(context).textTheme.headline4),
       ),
        SwitchListTile(
