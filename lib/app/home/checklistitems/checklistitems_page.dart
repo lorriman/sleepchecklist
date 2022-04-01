@@ -23,8 +23,6 @@ import 'checklistitems_view_model.dart';
 typedef RatingEvent = Future<void> Function(BuildContext context, WidgetRef ref,
     ChecklistItemTileModel checklistItemListTileModel, double rating);
 
-//this is Stateful because of a kludge we are doing in the init method.
-//todo: get rid of the kludge. priority: low
 class ChecklistItemsPage extends ConsumerStatefulWidget {
   @override
   _ChecklistItemsPageState createState() => _ChecklistItemsPageState();
@@ -37,7 +35,7 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
     //kludge: fetching this data with checklistItemListTileModelStreamProvider
     // also rewrites any null 'ordinal' items if they exist.
     // See [ChecklistItem.ordinal] for why.
-    // todo: (oneday), find better/non-kludgy way to do this
+    // todo: priority: low, find better/non-kludgy way to do this
     final params = CheckListItemsPageParametersProvider(DateTime.now());
     ref.read(checklistItemTileModelStreamProvider(params));
   }
@@ -176,14 +174,15 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
     asyncValue.whenData((models) {
       //todo: find a way to make the update instant
       //setState(() {
-      // removing the item at oldIndex will shorten the list by 1.
-      int index = newIndex;
-      if (oldIndex < newIndex) index -= 1;
+
       //indexes are 1 based, model is 0 based
-      index -= 1;
-      oldIndex -= 1;
-      final element = models.removeAt(oldIndex);
-      models.insert(index, element);
+      int idx = newIndex - 1;
+      final oldIdx = oldIndex - 1;
+      // removing the item at oldIndex will shorten the list by 1.
+      if (oldIndex < newIndex) idx -= 1;
+
+      final element = models.removeAt(oldIdx);
+      models.insert(idx, element);
       //});
       final database = ref.read(databaseProvider);
       final vm = ChecklistItemsViewModel(database: database);
@@ -289,7 +288,6 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
       ),
     );
   }
-
 }
 
 class FloatingAction extends StatelessWidget {
