@@ -32,7 +32,7 @@ class Settings extends ConsumerWidget {
         value: isEditingItemsState.state,
         onChanged: (value) {
           //ignore: dead_null_aware_expression
-          isEditingItemsState.state = value ?? false;
+          isEditingItemsState.state = value;
         },
       )
 
