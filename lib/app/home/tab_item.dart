@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:insomnia_checklist/constants/keys.dart';
 import 'package:insomnia_checklist/constants/strings.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+//terimport 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 //import 'package:flutter_icons/flutter_icons.dart';
 /*
@@ -59,7 +59,7 @@ class TabItemData {
     TabItem.sleep: TabItemData(
       key: Keys.sleepTab,
       title: Strings.sleep,
-      icon: FontAwesomeIcons.bed,
+      icon: Icons.hotel,
     ),
     TabItem.bin: TabItemData(
       key: Keys.binTab,
