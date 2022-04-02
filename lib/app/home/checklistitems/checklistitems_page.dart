@@ -174,15 +174,14 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
     asyncValue.whenData((models) {
       //todo: find a way to make the update instant
       setState(() {
+        //indexes are 1 based, model is 0 based
+        int idx = newIndex - 1;
+        final oldIdx = oldIndex - 1;
+        // removing the item at oldIndex will shorten the list by 1.
+        if (oldIndex < newIndex) idx -= 1;
 
-      //indexes are 1 based, model is 0 based
-      int idx = newIndex - 1;
-      final oldIdx = oldIndex - 1;
-      // removing the item at oldIndex will shorten the list by 1.
-      if (oldIndex < newIndex) idx -= 1;
-
-      final element = models.removeAt(oldIdx);
-      models.insert(idx, element);
+        final element = models.removeAt(oldIdx);
+        models.insert(idx, element);
       });
       final database = ref.read(databaseProvider);
       final vm = ChecklistItemsViewModel(database: database);
