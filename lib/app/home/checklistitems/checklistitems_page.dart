@@ -173,7 +173,7 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
       AsyncValue<List<ChecklistItemTileModel>> asyncValue) {
     asyncValue.whenData((models) {
       //todo: find a way to make the update instant
-      //setState(() {
+      setState(() {
 
       //indexes are 1 based, model is 0 based
       int idx = newIndex - 1;
@@ -183,7 +183,7 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
 
       final element = models.removeAt(oldIdx);
       models.insert(idx, element);
-      //});
+      });
       final database = ref.read(databaseProvider);
       final vm = ChecklistItemsViewModel(database: database);
       vm.rewriteSortOrdinals(models);

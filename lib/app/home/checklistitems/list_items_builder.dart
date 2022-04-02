@@ -68,6 +68,7 @@ class ListItemsBuilder<T> extends ConsumerWidget {
         primary: true,
         itemCount: items.length + 2,
         itemBuilder: (context, index) {
+          //if no items
           if (index == 0 || index == items.length + 1) {
             return Container(
                 key: Key(
