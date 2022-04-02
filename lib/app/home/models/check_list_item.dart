@@ -69,8 +69,6 @@ class ChecklistItem extends Equatable {
   //which this is detected and dealt with.
   final int? ordinal;
 
-//  static String idStringSanitiser(String s) => s.replaceAll('.', ' ');
-
   @override
   List<Object?> get props => [
         id,
@@ -93,21 +91,9 @@ class ChecklistItem extends Equatable {
     if (name == null) {
       throw StateError('missing name for ChecklistItemId: $documentId');
     }
-    //final tracker = CheckListTracker.fromMap(data, documentId);
+
 
     final description = data['description'] as String? ?? '';
-/*    final checked = data['checked'] as bool? ?? false;
-
-    List<int> checkedDays = [];
-    if (data['checked_days'] != null) {
-      if (false) {
-        if (data['checked_days'].length != 0) {
-          //this isn't working and raises an exception
-          checkedDays = (data['checked_days'] as List<int>).cast<int>();
-        }
-      }
-    }
-*/
     DateTime startDate = DateTime.now();
     if (data['start_day'] != null) {
       //the copy method will have a DateTime, whereas the firestore data will return a Timestamp
@@ -151,7 +137,6 @@ class ChecklistItem extends Equatable {
       'trash': trash,
       'deleted': deleted,
       'ordinal': ordinal,
-      //'all_days_tracker': tracker.toMap(),
     };
   }
 

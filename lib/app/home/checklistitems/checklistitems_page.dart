@@ -13,7 +13,6 @@ import 'package:insomnia_checklist/app/top_level_providers.dart';
 import 'package:insomnia_checklist/constants/keys.dart';
 import 'package:insomnia_checklist/services/utils.dart';
 import 'package:insomnia_checklist/services/globals.dart';
-//import 'package:pedantic/pedantic.dart';
 
 import '../settings.dart';
 import 'checklistitems_providers.dart';
@@ -117,7 +116,6 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
 
     return ListItemsBuilder<ChecklistItemTileModel>(
         data: tileModelsAsyncValue,
-        //filter: (item) => item.trash == false,
         reorderable: isEditingItems,
         onReorder: (oldI, newI) =>
             _onReorder(ref, oldI, newI, tileModelsAsyncValue),
@@ -172,7 +170,6 @@ class _ChecklistItemsPageState extends ConsumerState<ChecklistItemsPage> {
   void _onReorder(WidgetRef ref, int oldIndex, int newIndex,
       AsyncValue<List<ChecklistItemTileModel>> asyncValue) {
     asyncValue.whenData((models) {
-      //todo: find a way to make the update instant
       setState(() {
         //indexes are 1 based, model is 0 based
         int idx = newIndex - 1;
@@ -301,8 +298,6 @@ class FloatingAction extends StatelessWidget {
           margin: EdgeInsets.only(bottom: 70),
           child: FloatingActionButton(
             clipBehavior: Clip.antiAliasWithSaveLayer,
-            // mini: true,
-            //backgroundColor: Colors.white,
             child: Icon(Icons.add, key: Key(Keys.newChecklistItemButton)),
             onPressed: () => EditChecklistItemPage.show(context),
           ),

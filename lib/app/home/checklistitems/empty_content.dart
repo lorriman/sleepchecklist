@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Copyright Andrea Bozito, with modifications.
+/// Copyright Andrea Bozito, with modifications by GL.
 /// Notable additions and classes by Greg Lorriman as noted.
 
 class EmptyContent extends StatelessWidget {

@@ -32,7 +32,6 @@ class _ProductsPageState extends State<ProductsPage> {
         url,
         forceSafariVC: false,
         forceWebView: false,
-        //headers: <String, String>{'my_header_key': 'my_header_value'},
       );
     } else {
       throw AppException('Could not launch $url');
@@ -78,13 +77,7 @@ class _ProductsPageState extends State<ProductsPage> {
               _launchInBrowser(url);
             }
           }),
-          //clipBehavior: Clip.antiAlias,
-          /*
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(40),
-          ),
-          elevation: 20,
-          margin: EdgeInsets.all(0), */
+
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

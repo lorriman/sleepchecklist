@@ -61,12 +61,6 @@ class CupertinoHomeScaffold extends StatelessWidget {
         //color: color,
       ),
       label: itemData.title,
-
-      /*title: Text(
-        itemData.title,
-        key: Key(itemData.key),
-        style: TextStyle(color: color),
-      ),*/
     );
   }
 }

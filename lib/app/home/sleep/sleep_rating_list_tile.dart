@@ -1,4 +1,4 @@
-// gnore : prefer_const_constructors
+// ignore : prefer_const_constructors
 
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';

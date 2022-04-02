@@ -38,7 +38,6 @@ class _MyAppState extends ConsumerState<MyApp> {
             primarySwatch: Colors.lightGreen,
             brightness: Brightness.dark,
           ),
-//      debugShowCheckedModeBanner: false,
           home: AuthWidget(
             nonSignedInBuilder: (_) => Consumer(
               builder: (context, ref, _) {

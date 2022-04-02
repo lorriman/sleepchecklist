@@ -7,7 +7,6 @@ import '../../top_level_providers.dart';
 import 'checklistitems_tile_model.dart';
 import 'checklistitems_view_model.dart';
 
-//final isTrashViewProvider = ScopedProvider<bool>((_) => false);
 
 class CheckListItemsPageParametersProvider extends Equatable {
   const CheckListItemsPageParametersProvider(this.day);
@@ -17,7 +16,7 @@ class CheckListItemsPageParametersProvider extends Equatable {
   @override
   List<Object?> get props => [
         day,
-      ]; // , checked, description];
+      ];
 
 }
 

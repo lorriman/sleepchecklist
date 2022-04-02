@@ -7,7 +7,6 @@ import 'package:insomnia_checklist/app/home/checklistitems/checklistitem_list_ti
 import 'package:insomnia_checklist/app/home/checklistitems/list_items_builder.dart';
 import 'package:insomnia_checklist/services/globals.dart';
 import 'package:insomnia_checklist/services/utils.dart';
-//import 'package:pedantic/pedantic.dart';
 
 import '../settings.dart';
 import 'checklistitems_providers.dart';
@@ -113,10 +112,7 @@ class ChecklistItemsPageTrash extends ConsumerWidget {
 
   void _onDismissWithSnackbar(BuildContext context,
       List<ChecklistItemTileModel> models, ChecklistItemTileModel model) {
-    //setState(() {
-    // models.remove(model);
     _unTrashItem(context, model);
-    // });
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         duration: Duration(seconds: 1), content: Text('item restored')));
   }

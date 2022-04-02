@@ -10,9 +10,8 @@ import 'package:insomnia_checklist/constants/keys.dart';
 import 'package:insomnia_checklist/routing/app_router.dart';
 import 'package:insomnia_checklist/services/globals.dart';
 import 'package:insomnia_checklist/services/repository.dart';
-//import 'package:pedantic/pedantic.dart';
 
-/// Copyright Andrea Bozito, with modifications.
+/// Copyright Andrea Bozito, with modifications by GL.
 /// Notable additions and classes by Greg Lorriman as noted.
 
 class EditChecklistItemPage extends ConsumerStatefulWidget {
@@ -40,7 +39,6 @@ class _EditChecklistItemPageState extends ConsumerState<EditChecklistItemPage> {
   @override
   void initState() {
     super.initState();
-    //if (widget.checklistItem != null) {
     _name = widget.checklistItem?.name;
     _description = widget.checklistItem?.description;
     //}
@@ -70,7 +68,7 @@ class _EditChecklistItemPageState extends ConsumerState<EditChecklistItemPage> {
           unawaited(showAlertDialog(
             context: context,
             title: 'Name already used',
-            content: 'Please choose a different checklistItem name',
+            content: 'Please choose a different label',
             defaultActionText: 'OK',
           ));
         } else {

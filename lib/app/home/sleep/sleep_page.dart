@@ -9,11 +9,9 @@ import 'package:insomnia_checklist/app/home/sleep/sleep_rating_list_tile.dart';
 import 'package:insomnia_checklist/app/top_level_providers.dart';
 import 'package:insomnia_checklist/services/globals.dart';
 import 'package:intl/intl.dart';
-//import 'package:pedantic/pedantic.dart';
 import 'package:insomnia_checklist/services/repository.dart';
 import 'package:insomnia_checklist/services/utils.dart';
 import 'package:month_year_picker/month_year_picker.dart';
-//import 'package:month_picker_dialog/month_picker_dialog.dart';
 
 
 import '../settings.dart';
@@ -64,7 +62,6 @@ typedef OnSleepRating = Future<void> Function(
     BuildContext context, DateTime date, double rating);
 
 class SleepPage extends ConsumerWidget {
-  //dead variable used in legacy code below
 
   const SleepPage();
 
@@ -112,17 +109,6 @@ class SleepPage extends ConsumerWidget {
                   ref.read(sleepDateProvider.state).state = selected;
                 }
 
-              /*
-                showMonthPicker(
-                  context: context,
-                  firstDate: DateTime(DateTime.now().year - 3, 1),
-                  lastDate: DateTime(DateTime.now().year, DateTime.now().month),
-                  initialDate: ref.read(sleepDateProvider.state).state,
-                ).then((date) {
-                  if (date != null) {
-                    ref.read(sleepDateProvider.state).state = date;
-                  }
-                });*/
               },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
@@ -136,7 +122,7 @@ class SleepPage extends ConsumerWidget {
             )
           ],
         ),
-        //Strings.checklistItems),
+
       ),
       body: Column(
           children: [Flexible(child: _buildContents(context, ref, date))]),

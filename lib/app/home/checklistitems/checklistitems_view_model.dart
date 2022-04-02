@@ -47,7 +47,7 @@ class ChecklistItemsViewModel {
 
     return CombineLatestStream.combine2(
       Stream<Map<String, Rating>>.value({}),
-      database.checklistItemsTrashStream(), // as Stream<List<ChecklistItem>>,
+      database.checklistItemsTrashStream(),
       _ratingsChecklistItemsCombiner,
     );
   }
