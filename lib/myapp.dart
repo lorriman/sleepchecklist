@@ -24,8 +24,9 @@ class _MyAppState extends ConsumerState<MyApp> {
       builder: (context, ref, _) {
         final darkMode = ref.watch(darkModeProvider.state);
         return MaterialApp(
-          checkerboardOffscreenLayers: true,
-          checkerboardRasterCacheImages: true,
+          showPerformanceOverlay: true,
+          checkerboardOffscreenLayers: false,
+          checkerboardRasterCacheImages: false,
           themeMode: darkMode.state ? ThemeMode.dark : ThemeMode.light,
           localizationsDelegates: const [
             GlobalWidgetsLocalizations.delegate,
