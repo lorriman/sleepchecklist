@@ -24,6 +24,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       builder: (context, ref, _) {
         final darkMode = ref.watch(darkModeProvider.state);
         return MaterialApp(
+          //showPerformanceOverlay: true,
           themeMode: darkMode.state ? ThemeMode.dark : ThemeMode.light,
           localizationsDelegates: const [
             GlobalWidgetsLocalizations.delegate,

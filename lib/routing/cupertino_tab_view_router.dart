@@ -19,7 +19,7 @@ class CupertinoPageRouteAnimated extends CupertinoPageRoute {
   @override
   Widget buildPage(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation) {
-    return FadeTransition(opacity: animation, child: Text('1st placeholder: see cupertino_tab_view_router '));
+    return FadeTransition(opacity: animation, child: builder(context));
   }
 }
 
@@ -30,9 +30,7 @@ class CupertinoTabViewRoutes {
 class CupertinoTabViewRouter {
   static Route? generateRoute(RouteSettings settings) {
     return CupertinoPageRouteAnimated(
-      builder: (_) => Center(
-          child: Text(
-              '2nd placeholder, see cupertino_tab_view_router.dart')), //ChecklistItemEntriesPage(checklistItem: checklistItem),
+      builder: (_) => Text('placeholder'), //ChecklistItemEntriesPage(checklistItem: checklistItem),
       settings: settings,
       fullscreenDialog: false,
     );

@@ -27,12 +27,12 @@ class CupertinoHomeScaffold extends StatelessWidget {
       tabBar: CupertinoTabBar(
         key: const Key(Keys.tabBar),
         items: [
-          _buildItem(TabItem.items),
-          _buildItem(TabItem.tracking),
-          _buildItem(TabItem.sleep),
-          _buildItem(TabItem.bin),
-          _buildItem(TabItem.products),
-          _buildItem(TabItem.account),
+          _buildNavigationBarItem(TabItem.items),
+          _buildNavigationBarItem(TabItem.tracking),
+          _buildNavigationBarItem(TabItem.sleep),
+          _buildNavigationBarItem(TabItem.bin),
+          _buildNavigationBarItem(TabItem.products),
+          _buildNavigationBarItem(TabItem.account),
         ],
         onTap: (index) => onSelectTab(TabItem.values[index]),
       ),
@@ -41,13 +41,15 @@ class CupertinoHomeScaffold extends StatelessWidget {
         return CupertinoTabView(
           navigatorKey: navigatorKeys[item],
           builder: (context) => widgetBuilders[item]!(context),
+          //unless builder is commented out, this never gets called. And when it does settings
+          //holds no useful info.
           onGenerateRoute: CupertinoTabViewRouter.generateRoute,
         );
       },
     );
   }
 
-  BottomNavigationBarItem _buildItem(TabItem tabItem) {
+  BottomNavigationBarItem _buildNavigationBarItem(TabItem tabItem) {
     final itemData = TabItemData.allTabs[tabItem]!;
     //final color = currentTab == tabItem ? Colors.indigo : Colors.grey;
     return BottomNavigationBarItem(
