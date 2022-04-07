@@ -30,66 +30,57 @@ class ChecklistItemExpandedTile extends ConsumerWidget {
     final isEditingItems = ref.watch(editItemsProvider.state).state;
     const borderRadius = 40.0;
 
-    return Container(
-      margin: EdgeInsets.all(10.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.grey,
-            blurRadius: 10,
-            offset: Offset(4, 4), // Shadow position
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-        //Material is needed to support Inkwell effects
-        child: Material(
-          child: ExpansionTile(
-            childrenPadding: EdgeInsets.all(10),
-            leading: isEditingItems ? _thumb() : null,
-            title: Row(
-              children: [
-                if (!isEditingItems) ...[
-                  Container(width: 10), //spacer
-                  RatingBar.builder(
-                    initialRating: rating,
-                    glowRadius: 20,
-                    itemBuilder: isDarkMode
-                        //RatingsBar doesn't directly support different icons for
-                        // selected/unselected, so we need to customise it
-                        ? _darkModeRatingsBar
-                        : (context, index) =>
-                            Icon(Icons.star, color: Colors.black),
-                    itemCount: 5,
-                    itemSize: 30.0,
-                    direction: Axis.horizontal,
-                    onRatingUpdate: (rating) =>
-                        onRating!(context, ref, checklistItemTileModel, rating),
-                  )
-                ],
-                Container(width: 5),
-                Expanded(child: Text(checklistItemTileModel.titleText)),
-                if (isEditingItems)
-                  Padding(
-                    padding: EdgeInsets.only(left: 8.0),
-                    child: InkWell(
-                        child: Icon(Icons.edit_outlined), onTap: onEdit),
-                  ),
-              ],
-            ),
+    return Card(
+      margin: EdgeInsets.all(5.0),
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      shadowColor: Colors.grey,
+      elevation: 10,
+      //Material is needed to support Inkwell effects
+      child: Material(
+        child: ExpansionTile(
+          childrenPadding: EdgeInsets.all(10),
+          leading: isEditingItems ? _thumb() : null,
+          title: Row(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(children: [
-                  Expanded(
-                    child: Text(checklistItemTileModel.bodyText),
-                  ),
-                ]),
-              ),
+              if (!isEditingItems) ...[
+                Container(width: 10), //spacer
+                RatingBar.builder(
+                  initialRating: rating,
+                  glowRadius: 20,
+                  itemBuilder: isDarkMode
+                      //RatingsBar doesn't directly support different icons for
+                      // selected/unselected, so we need to customise it
+                      ? _darkModeRatingsBar
+                      : (context, index) =>
+                          Icon(Icons.star, color: Colors.black),
+                  itemCount: 5,
+                  itemSize: 30.0,
+                  direction: Axis.horizontal,
+                  onRatingUpdate: (rating) =>
+                      onRating!(context, ref, checklistItemTileModel, rating),
+                )
+              ],
+              Container(width: 5),
+              Expanded(child: Text(checklistItemTileModel.titleText)),
+              if (isEditingItems)
+                Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child:
+                      InkWell(child: Icon(Icons.edit_outlined), onTap: onEdit),
+                ),
             ],
           ),
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(children: [
+                Expanded(
+                  child: Text(checklistItemTileModel.bodyText),
+                ),
+              ]),
+            ),
+          ],
         ),
       ),
     );
