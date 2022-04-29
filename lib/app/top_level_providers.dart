@@ -23,11 +23,11 @@ final editItemsProvider = StateProvider<bool>((ref) {
 final firebaseAuthProvider =
     Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
 
-final authStateChangesProvider = StreamProvider<User?>(
+final authStateChangesProvider = StreamProvider.autoDispose<User?>(
     (ref) => ref.watch(firebaseAuthProvider).authStateChanges());
 
 //todo: rename
-final databaseProvider = Provider<Repository>((ref) {
+final databaseProvider = Provider.autoDispose<Repository>((ref) {
   final auth = ref.watch(authStateChangesProvider);
 
   if (auth.asData?.value?.uid != null) {
