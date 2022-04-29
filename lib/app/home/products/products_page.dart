@@ -61,8 +61,13 @@ class _ProductsPageState extends State<ProductsPage> {
   Widget itemBuilder(BuildContext context, int index) {
     final String? url = productUrls[(index + 1).toString()];
     final String assetPath = 'assets/products/product${index + 1}.jpg';
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
+    return Card(
+      margin: EdgeInsets.all(20.0),
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      shadowColor: Colors.grey,
+      elevation: 10,
+     // padding: const EdgeInsets.all(20.0),
       child: InkWell(
         onDoubleTap: () => setState(() {
           if (!kReleaseMode) _showUrls = !_showUrls;
@@ -83,14 +88,11 @@ class _ProductsPageState extends State<ProductsPage> {
             child: Column(
               children: [
                 if (_showUrls) Text(url ?? 'no url string'),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20.0),
-                  child: Image.asset(
-                    assetPath,
-                    fit: BoxFit.cover,
-                    cacheHeight:
-                        -120 + (_constraints?.maxHeight.toInt() ?? 500),
-                  ),
+                Image.asset(
+                  assetPath,
+                  fit: BoxFit.cover,
+                  cacheHeight:
+                      -120 + (_constraints?.maxHeight.toInt() ?? 500),
                 ),
               ],
             ),
