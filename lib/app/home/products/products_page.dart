@@ -16,6 +16,13 @@ import '../settings.dart';
 //as a quick demo. Expected to use Firebase storage and an A/B testing
 //scheme in future.
 class ProductsPage extends StatefulWidget {
+
+  final bool visible;
+
+  ProductsPage({this.visible = true});
+
+
+
   @override
   _ProductsPageState createState() => _ProductsPageState();
 }
@@ -25,6 +32,7 @@ class _ProductsPageState extends State<ProductsPage> {
   bool _showUrls = false;
   Future<Map<String, String>>? _urlsFuture;
   BoxConstraints? _constraints;
+  //bool visible=false;
 
   Future<void> _launchInBrowser(String url) async {
     if (await canLaunch(url)) {
@@ -108,60 +116,66 @@ class _ProductsPageState extends State<ProductsPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('visible: ${widget.visible}');
     return Scaffold(
       drawer: Drawer(child: Settings()),
       appBar: AppBar(
         title: const Text('Products'),
       ),
-      body: LayoutBuilder(builder: (context, constraints) {
-        _constraints = constraints;
-        return FutureBuilder(
-          future: _urlsFuture,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Text(snapshot.error.toString());
-            }
-            if (snapshot.hasData) {
-              if (constraints.maxWidth > 900) {
-                return Column(
-                  children: [
-                    Expanded(
-                      child: StaggeredGridView.countBuilder(
-                        crossAxisCount: 4,
-                        itemCount: 4,
-                        itemBuilder: (context, index) {
-                          return Center(
-                            child: itemBuilder(context, index),
-                          );
-                        },
-                        staggeredTileBuilder: (index) => StaggeredTile.fit(2),
-                        mainAxisSpacing: 4.0,
-                        crossAxisSpacing: 4.0,
-                      ),
-                      flex: 1,
-                    ),
-                  ],
-                );
-              } else {
-                return Column(
-                  children: [
-                    Expanded(
-                      child: ListView.separated(
-                        itemBuilder: itemBuilder,
-                        separatorBuilder: separatorBuilder,
-                        itemCount: 4,
-                      ),
-                      flex: 1,
-                    ),
-                  ],
-                );
+      body: AnimatedOpacity(
+        duration: Duration(milliseconds: 2000,),
+        opacity: widget.visible? 1 : 0,
+        onEnd: (){ print('internal AnimatedOpacity');},
+        child: LayoutBuilder(builder: (context, constraints) {
+          _constraints = constraints;
+          return FutureBuilder(
+            future: _urlsFuture,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Text(snapshot.error.toString());
               }
-            } else {
-              return CircularProgressIndicator();
-            }
-          },
-        );
-      }),
+              if (snapshot.hasData) {
+                if (constraints.maxWidth > 900) {
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: StaggeredGridView.countBuilder(
+                          crossAxisCount: 4,
+                          itemCount: 4,
+                          itemBuilder: (context, index) {
+                            return Center(
+                              child: itemBuilder(context, index),
+                            );
+                          },
+                          staggeredTileBuilder: (index) => StaggeredTile.fit(2),
+                          mainAxisSpacing: 4.0,
+                          crossAxisSpacing: 4.0,
+                        ),
+                        flex: 1,
+                      ),
+                    ],
+                  );
+                } else {
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: ListView.separated(
+                          itemBuilder: itemBuilder,
+                          separatorBuilder: separatorBuilder,
+                          itemCount: 4,
+                        ),
+                        flex: 1,
+                      ),
+                    ],
+                  );
+                }
+              } else {
+                return CircularProgressIndicator();
+              }
+            },
+          );
+        }),
+      ),
     );
   }
 }

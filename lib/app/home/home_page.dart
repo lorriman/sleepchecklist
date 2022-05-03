@@ -20,6 +20,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final transitionDuration = 2000;
   TabItem _currentTab = TabItem.items;
+  bool cloak = false;
 
   final Map<TabItem, GlobalKey<NavigatorState>> navigatorKeys = {
     TabItem.items: GlobalKey<NavigatorState>(),
@@ -42,7 +43,7 @@ class _HomePageState extends State<HomePage> {
       TabItem.tracking: (_) => TrackingPage(),
       TabItem.sleep: (_) => AnimatedOpacity(child:  SleepPage(), duration: Duration(milliseconds: transitionDuration), opacity: opacities[TabItem.sleep]!,),
       TabItem.account: (_) => AccountPage(),
-      TabItem.products: (_){ print('building products ${opacities[TabItem.products]!}' ); return AnimatedOpacity(child:  ProductsPage(), duration: Duration(milliseconds: transitionDuration), opacity:  opacities[TabItem.products]!, onEnd : (){ print('end animation  ${opacities[TabItem.products]!}');});},
+      TabItem.products: (_){ print('building products ${opacities[TabItem.products]!}' ); final visible= TabItem.products==_currentTab; print('$visible'); return ProductsPage(visible: !cloak && _currentTab==TabItem.products );},
       TabItem.bin: (_) => ChecklistItemsPageTrash(),
     };
   }
@@ -56,9 +57,27 @@ class _HomePageState extends State<HomePage> {
     } else {
 
         opacities[_currentTab]=0;
-        opacities[tabItem]=1;
+        opacities[tabItem]=0;
+        cloak=true;
+      setState(() {
+
+      });
+      cloak=false;
       setState(() => _currentTab = tabItem);
+
+
     }
+
+  }
+
+  @override
+  void didUpdateWidget(covariant HomePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    return;
+    setState(() {
+      print('setState ${_currentTab.name}');
+      opacities[_currentTab]=1;
+    });
 
   }
 
