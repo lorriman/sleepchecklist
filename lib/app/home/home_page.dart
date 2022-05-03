@@ -18,6 +18,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final transitionDuration = 2000;
   TabItem _currentTab = TabItem.items;
 
   final Map<TabItem, GlobalKey<NavigatorState>> navigatorKeys = {
@@ -27,24 +28,35 @@ class _HomePageState extends State<HomePage> {
     TabItem.account: GlobalKey<NavigatorState>(),
     TabItem.bin: GlobalKey<NavigatorState>(),
   };
+  final Map<TabItem, double?> opacities = {
+    TabItem.items: 1,
+    TabItem.tracking: 0,
+    TabItem.sleep: 0,
+    TabItem.account: 0,
+    TabItem.bin: 0,
+  };
 
   Map<TabItem, WidgetBuilder> get widgetBuilders {
     return {
-      TabItem.items: (_) => ChecklistItemsPage(),
+      TabItem.items: (_) => AnimatedOpacity(child:  ChecklistItemsPage(), duration: Duration(milliseconds: transitionDuration), opacity: opacities[TabItem.items ]!,),
       TabItem.tracking: (_) => TrackingPage(),
-      TabItem.sleep: (_) => SleepPage(),
+      TabItem.sleep: (_) => AnimatedOpacity(child:  SleepPage(), duration: Duration(milliseconds: transitionDuration), opacity: opacities[TabItem.sleep]!,),
       TabItem.account: (_) => AccountPage(),
-      TabItem.products: (_) => ProductsPage(),
+      TabItem.products: (_){ print('building products ${opacities[TabItem.products]!}' ); return AnimatedOpacity(child:  ProductsPage(), duration: Duration(milliseconds: transitionDuration), opacity:  opacities[TabItem.products]!, onEnd : (){ print('end animation');});},
       TabItem.bin: (_) => ChecklistItemsPageTrash(),
     };
   }
 
   void _select(TabItem tabItem) {
 
+
     if (tabItem == _currentTab) {
       // pop to first route
       navigatorKeys[tabItem]!.currentState?.popUntil((route) => route.isFirst);
     } else {
+
+        opacities[_currentTab]=0;
+        opacities[tabItem]=1;
       setState(() => _currentTab = tabItem);
     }
 
