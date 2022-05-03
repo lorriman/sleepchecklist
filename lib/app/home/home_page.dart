@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
       TabItem.tracking: (_) => TrackingPage(),
       TabItem.sleep: (_) => AnimatedOpacity(child:  SleepPage(), duration: Duration(milliseconds: transitionDuration), opacity: opacities[TabItem.sleep]!,),
       TabItem.account: (_) => AccountPage(),
-      TabItem.products: (_){ print('building products ${opacities[TabItem.products]!}' ); return AnimatedOpacity(child:  ProductsPage(), duration: Duration(milliseconds: transitionDuration), opacity:  opacities[TabItem.products]!, onEnd : (){ print('end animation');});},
+      TabItem.products: (_){ print('building products ${opacities[TabItem.products]!}' ); return AnimatedOpacity(child:  ProductsPage(), duration: Duration(milliseconds: transitionDuration), opacity:  opacities[TabItem.products]!, onEnd : (){ print('end animation  ${opacities[TabItem.products]!}');});},
       TabItem.bin: (_) => ChecklistItemsPageTrash(),
     };
   }
